@@ -22,4 +22,11 @@
 - [API-контракт](docs/api-contract.md)
 - [Матрица требований](docs/requirements-matrix.md)
 
-## Структура репозитория
+## Документация
+
+- [Заявка на тему](docs/project-proposal.md)
+- [Требования (ЛР1)](docs/lab-01-requirements.md)
+- [Архитектура (ЛР2)](docs/architecture.md)
+- [Модель данных (ЛР2)](docs/data-model.md)
+- [API-контракт (ЛР2)](docs/api-contract.md)
+- [Матрица требований (ЛР2)](docs/requirements-matrix.md)
