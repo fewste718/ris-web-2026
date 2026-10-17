@@ -1,42 +1,36 @@
 # Матрица требований
 
-Связь: требование из ЛР1 → поле или сущность → запрос → критерий приёмки.
+## Функциональные требования
 
-| № | Требование ЛР1 | Поле или сущность | Запрос | Критерий |
-|---|---|---|---|---|
-| 1 | Сотрудник создаёт заявку на доступ | AccessRequest: title, systemId, description | POST /api/access-requests | Критерий 1 |
-| 2 | После создания заявка получает статус New и номер | status, number | POST /api/access-requests | Критерий 1 |
-| 3 | Администратор назначает исполнителя | assigneeUserId | PATCH /api/access-requests/{id}/assignee | Критерий 2 |
-| 4 | Назначение не меняет статус заявки | status, assigneeUserId | PATCH /api/access-requests/{id}/assignee | Критерий 2 |
-| 5 | Исполнитель переводит заявку в работу | status = InProgress | PATCH /api/access-requests/{id}/status | Критерий 3 |
-| 6 | Исполнитель закрывает заявку | status = Closed | PATCH /api/access-requests/{id}/status | Критерий 3 |
-| 7 | Отмена заявки через статус | status = Cancelled | PATCH /api/access-requests/{id}/status | Критерий 3 |
-| 8 | Сотрудник видит только свои заявки | createdByUserId | GET /api/access-requests?mine=true | Критерий 4 |
-| 9 | Администратор видит все заявки | — | GET /api/access-requests | Критерий 4 |
-| 10 | Фильтр списка по статусу | status | GET /api/access-requests?status=New | Критерий 4 |
-| 11 | Просмотр деталей одной заявки | id | GET /api/access-requests/{id} | Критерий 5 |
-| 12 | Запрет менять статус чужой заявки | assigneeUserId | PATCH /api/access-requests/{id}/status | Критерий 6 |
-| 13 | Запрет назначать исполнителя на закрытую заявку | status | PATCH /api/access-requests/{id}/assignee | Критерий 6 |
-| 14 | Название системы не дублируется в заявках | System, systemId | GET /api/access-requests/{id} | Критерий 7 |
+| Требование ЛР1 | Поле или сущность | Запрос | Проверка |
+|---|---|---|---|
+| ФТ-1. Вход диспетчера и инженера | User: login, passwordHash, role | POST /api/auth/login | Верные данные → 200 и роль; неверные → 401 |
+| ФТ-2. Форма с оборудованием и клиентом | Equipment, clientId → Client | GET /api/equipment | Вариант оборудования содержит числовой id и название клиента |
+| ФТ-3. Создание заявки | SupportTicket: title, equipmentId, description, id, number, createdAt, createdByUserId, status, assigneeUserId | POST /api/support-tickets | Критерий 1: 201, номер, New, автор-диспетчер и пустой исполнитель |
+| ФТ-4. Валидация | title, description, equipmentId; Equipment.clientId | POST /api/support-tickets | Неверные поля или ссылки → 400, запись не создана |
+| ФТ-5. Общий список диспетчера | SupportTicket, Equipment, Client, User | GET /api/support-tickets | Диспетчер видит все заявки и сведения о клиенте и исполнителе; пустой список → 200 и [] |
+| ФТ-6. Список инженера | assigneeUserId, текущий User.id | GET /api/support-tickets | Возвращаются только назначенные вошедшему инженеру заявки |
+| ФТ-7. Фильтр по статусу | status | GET /api/support-tickets?status=New | Только доступные заявки выбранного статуса; неизвестный код → 400 |
+| ФТ-8. Отдельное назначение инженера | assigneeUserId → User, role, status | GET /api/users?role=Engineer; PATCH /api/support-tickets/{id}/assignee | Критерий 2: 200, инженер записан, статус остался New |
+| ФТ-9. Начало работы | assigneeUserId, status | PATCH /api/support-tickets/{id}/status | Критерий 3: только назначенный инженер переводит New → InProgress |
+| ФТ-10. Завершение работы | assigneeUserId, status | PATCH /api/support-tickets/{id}/status | Назначенный инженер переводит InProgress → Closed; другой инженер и диспетчер получают 403 |
+| ФТ-11. Отмена | status, number, assigneeUserId | PATCH /api/support-tickets/{id}/status | Диспетчер переводит New или InProgress → Cancelled; номер и исполнитель сохранены |
+| ФТ-12. Запрет чужих и недоступных действий | User.role, текущий User.id, assigneeUserId | POST /api/support-tickets; PATCH /api/support-tickets/{id}/assignee; PATCH /api/support-tickets/{id}/status; GET /api/support-tickets/{id} | Запрещённое роли действие или чужая заявка инженера → 403, данные не изменены |
+| ФТ-13. Запрет недопустимых переходов и назначения | status, assigneeUserId | PATCH /api/support-tickets/{id}/status; PATCH /api/support-tickets/{id}/assignee | Недопустимое состояние → 409; неизвестный статус → 400; отмена сохраняет строку |
 
-## Критерии приёмки
+## Три обязательных критерия
 
-| № | Критерий | Как проверяется |
+| № | Критерий ЛР1 | Результат |
 |---|---|---|
-| 1 | Создание возвращает 201, id, number, status = New | POST с валидным телом → проверить поля ответа |
-| 2 | Назначение заполняет assigneeUserId, статус не меняется | PATCH assignee → в ответе assigneeUserId ≠ null, status = New |
-| 3 | Смена статуса на любой из четырёх разрешённых кодов | PATCH status = InProgress/Closed/Cancelled → 200, невалидный код → 400 |
-| 4 | Список и фильтры работают | GET с разными query → проверить длину массива |
-| 5 | Детали заявки возвращают все поля | GET по id → сравнить с образцом |
-| 6 | Запреты возвращают 409 или 403 | PATCH чужой заявки → не 200 |
-| 7 | Название системы приходит из справочника | GET заявки → поле system.name заполнено, не пустое |
+| 1 | Диспетчер создаёт заявку | Сохранена одна SupportTicket с equipmentId, клиентом через Equipment, отдельными id и number, статусом New, автором и пустым исполнителем |
+| 2 | Диспетчер назначает инженера | Изменён assigneeUserId, статус остался New, остальные поля сохранены |
+| 3 | Назначенный инженер берёт заявку в работу | Статус стал InProgress; другой инженер и диспетчер не могут выполнить переход |
 
-## Что покрыто и чего нет
+## Нефункциональные требования
 
-**Покрыто матрицей:** все ФТ-1 – ФТ-10 из ЛР1.
-
-**Не входит в семестр:**
-- История изменений (аудит) 
-- Уведомления по email 
-- Автопроверка прав через LDAP 
-- Импорт сотрудников из Excel 
+| Требование ЛР1 | Объект проверки | Способ проверки |
+|---|---|---|
+| НФТ-1. Сохранность данных | PostgreSQL: SupportTicket, Equipment, Client, User | Создать заявку, перезапустить API и БД, повторить GET /api/support-tickets/{id}; сравнить номер, статус и связи |
+| НФТ-2. Время отклика | GET /api/support-tickets и отображение списка | До 100 записей; после прогрева каждое из пяти открытий укладывается в 2 секунды |
+| НФТ-3. Отображение | Три экрана Vue | Вход и основные действия доступны в Chrome, Firefox, Edge при окне 1280×720 без горизонтальной прокрутки |
+| НФТ-4. Защита учётных данных | User.passwordHash, конфигурация и Git | В БД хранится хеш пароля, API не возвращает его; настоящие пароли и секреты подключения отсутствуют в Git |
