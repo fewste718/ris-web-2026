@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { equipment } from './equipment.js'
 
 export const items = ref([
   {
@@ -20,3 +21,23 @@ export const items = ref([
     status: 'InProgress',
   },
 ])
+
+let nextId = Math.max(...items.value.map((item) => item.id)) + 1
+let nextNumber = items.value.length + 1
+
+export function addItem({ title, equipmentId, description }) {
+  const selectedEquipment = equipment.find((item) => item.id === equipmentId)
+  const item = {
+    id: nextId++,
+    number: `SUP-2026-${String(nextNumber++).padStart(4, '0')}`,
+    title,
+    equipmentId,
+    equipmentName: selectedEquipment.name,
+    clientName: selectedEquipment.clientName,
+    description,
+    status: 'New',
+  }
+
+  items.value.push(item)
+  return item
+}
