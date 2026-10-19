@@ -2,7 +2,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { equipment } from '../equipment.js'
-import { addItem } from '../ticketsStore.js'
+import { createTicket } from '../api/tickets.js'
 
 const router = useRouter()
 const titleInput = ref(null)
@@ -12,6 +12,7 @@ const emptyForm = () => ({ title: '', equipmentId: 0, description: '' })
 const form = ref(emptyForm())
 const errors = ref({})
 const submitting = ref(false)
+const requestError = ref('')
 
 function validate(values) {
   const result = {}
@@ -37,6 +38,7 @@ async function onCreate() {
     description: form.value.description.trim(),
   }
   errors.value = validate(values)
+  requestError.value = ''
   if (Object.keys(errors.value).length) {
     await nextTick()
     const invalidInput = errors.value.title ? titleInput
@@ -46,10 +48,17 @@ async function onCreate() {
   }
 
   submitting.value = true
-  addItem(values)
-  errors.value = {}
-  form.value = emptyForm()
-  await router.push('/')
+  try {
+    await createTicket(values)
+    errors.value = {}
+    form.value = emptyForm()
+    await router.push('/')
+  } catch (error) {
+    requestError.value = error.message
+    errors.value = error.errors ?? {}
+  } finally {
+    submitting.value = false
+  }
 }
 
 onMounted(() => {
@@ -84,9 +93,9 @@ onMounted(() => {
         <span id="description-help" class="field-help">От 10 до 500 символов</span>
         <p v-if="errors.description" id="description-error" class="field-error" role="alert">{{ errors.description }}</p>
       </div>
-      <p class="demo-note">Заявки хранятся в памяти до обновления страницы.</p>
+      <p v-if="requestError" class="request-error" role="alert">{{ requestError }}</p>
       <div class="form-actions">
-        <button class="button button-primary" type="submit" :disabled="submitting">Создать заявку</button>
+        <button class="button button-primary" type="submit" :disabled="submitting">{{ submitting ? 'Создаём…' : 'Создать заявку' }}</button>
         <router-link class="button button-secondary" to="/">К списку</router-link>
       </div>
     </form>
@@ -95,6 +104,7 @@ onMounted(() => {
 
 <style scoped>
 .field-error { margin: 7px 0 0; color: #a12e27; font-size: 13px; line-height: 1.5; }
+.request-error { margin: 23px 0 0; color: #a12e27; font-size: 14px; line-height: 1.5; }
 [aria-invalid="true"] { border-color: #a12e27; }
 .button:disabled { opacity: 0.65; cursor: default; }
 </style>

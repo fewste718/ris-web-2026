@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проверка API — ЛР6</title>
+  <style>
+    body { max-width: 1000px; margin: 40px auto; padding: 0 24px; font: 16px/1.6 'Segoe UI', sans-serif; color: #172b45; background: #f3f5f8; }
+    button { padding: 12px 18px; margin: 0 10px 12px 0; cursor: pointer; }
+    pre { padding: 24px; background: white; border: 1px solid #dfe5ed; border-radius: 8px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Проверка API — ЛР6</h1>
+  <p>Учебная страница для вызова API без клиентской проверки формы. Откройте F12 → Network → Fetch/XHR.</p>
+  <button id="list">Получить список</button>
+  <button id="create">Создать корректную заявку</button>
+  <button id="invalid">Отправить тему abc</button>
+  <pre id="result" aria-live="polite">Запрос ещё не выполнен.</pre>
+  <script type="module">
+    import { createTicket, getTickets } from '/src/api/tickets.js'
+    const result = document.querySelector('#result')
+    async function run(action) {
+      result.textContent = 'Ожидание ответа…'
+      const buttons = [...document.querySelectorAll('button')]
+      buttons.forEach((button) => { button.disabled = true })
+      try { result.textContent = JSON.stringify(await action(), null, 2) }
+      catch (error) { result.textContent = JSON.stringify({ status: error.status, message: error.message, errors: error.errors }, null, 2) }
+      finally { buttons.forEach((button) => { button.disabled = false }) }
+    }
+    const body = { title: 'Не подключается рабочий компьютер', equipmentId: 7, description: 'После включения компьютера недоступен сетевой принтер.' }
+    document.querySelector('#list').addEventListener('click', () => run(getTickets))
+    document.querySelector('#create').addEventListener('click', () => run(() => createTicket(body)))
+    document.querySelector('#invalid').addEventListener('click', () => run(() => createTicket({ ...body, title: 'abc' })))
+  </script>
+</body>
+</html>
