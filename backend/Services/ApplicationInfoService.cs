@@ -17,6 +17,6 @@ public sealed class ApplicationInfoService : IApplicationInfoService
             "Мобиус Технологии — управление заявками",
             _environment.EnvironmentName,
             "1.0.0",
-            "ЛР7");
+            "ЛР8");
     }
 }

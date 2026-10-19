@@ -1,0 +1,702 @@
+{
+  "info": {
+    "name": "ЛР8 — заявки технической поддержки",
+    "description": "Запускать по порядку после перезапуска backend. baseUrl=http://localhost:5000, ресурс support-tickets. Учебный X-User-Id: 1 — диспетчер, 2 и 3 — инженеры. ticketId и cancelTicketId заполняются из ответов POST. Данные находятся в памяти, после перезапуска сервера исчезают.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "resource",
+      "value": "support-tickets"
+    },
+    {
+      "key": "ticketId",
+      "value": ""
+    },
+    {
+      "key": "cancelTicketId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Список после перезапуска — 200 и []",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Пустой массив', () => pm.expect(pm.response.json()).to.eql([]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Создать заявку — 201",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Не печатает сетевой принтер\",\n  \"equipmentId\": 7,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "const created = pm.response.json();",
+              "pm.collectionVariables.set('ticketId', String(created.id));",
+              "pm.test('Серверные поля', () => { pm.expect(created.id).to.be.a('number'); pm.expect(created.number).to.match(/^SUP-\\d{4}-\\d{4,}$/); pm.expect(created.status).to.eql('New'); pm.expect(created.assigneeUserId).to.eql(null); pm.expect(created.createdByUserId).to.eql(1); pm.expect(created.clientId).to.eql(3); });",
+              "pm.test('Location', () => pm.expect(pm.response.headers.get('Location')).to.include('/api/support-tickets/' + created.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Короткая тема — 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"abc\",\n  \"equipmentId\": 7,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Неизвестное оборудование — 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Не печатает сетевой принтер\",\n  \"equipmentId\": 999999,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Несуществующая заявка — 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/999999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Получить созданную заявку — 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('ID сохранён', () => pm.expect(String(pm.response.json().id)).to.eql(pm.collectionVariables.get('ticketId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 В работу без инженера — 409",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Назначить инженера — 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Назначение не меняет статус', () => { const item = pm.response.json(); pm.expect(item.status).to.eql('New'); pm.expect(item.assigneeUserId).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Чужой инженер — 409",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "3"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Взять в работу — 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('В работе', () => pm.expect(pm.response.json().status).to.eql('InProgress'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Переназначение в работе — 409",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Закрыть заявку — 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Закрыта', () => pm.expect(pm.response.json().status).to.eql('Closed'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Повторное открытие — 409",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Создать заявку для отмены — 201",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Не открывается общая папка\",\n  \"equipmentId\": 8,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set('cancelTicketId', String(pm.response.json().id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15 Назначить второго инженера — 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/assignee"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16 Отменить заявку — 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Cancelled\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Отмена сохраняет исполнителя', () => { const item=pm.response.json(); pm.expect(item.status).to.eql('Cancelled'); pm.expect(item.assigneeUserId).to.eql(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "17 Список инженера — только свои — 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Только назначенные заявки', () => { const items=pm.response.json(); pm.expect(items.length).to.eql(1); pm.expect(items.every(item => item.assigneeUserId === 2)).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "18 Прямой доступ к чужой заявке — 409",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 Фильтр Cancelled — 200",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}?status=Cancelled"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Фильтр статуса', () => { const items=pm.response.json(); pm.expect(items.length).to.eql(1); pm.expect(items[0].status).to.eql('Cancelled'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Неизвестный статус — 400",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "2"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Done\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "result": "passed",
+  "requests": 81,
+  "scenarios": [
+    "Invalid values, JSON, numeric types and actors rejected without creating records",
+    "Boundary lengths accepted, text trimmed, IDs/number/author/status owned by server",
+    "Assignment/status separated, actors checked, failed changes preserve fields, Closed immutable",
+    "Cancellation preserves data, Cancelled immutable, exact statuses and visibility filter, no DELETE/general PATCH",
+    "20 concurrent creates have distinct IDs/numbers; temporary failure removed"
+  ]
+}

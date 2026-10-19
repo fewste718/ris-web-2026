@@ -1,0 +1,1 @@
+fail: backend.Filters.ApiExceptionFilter[0] CreateSupportTicket failed; equipmentId=7; ticketId=(null); error=InvalidOperationException

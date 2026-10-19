@@ -1,8 +1,12 @@
 using backend.Services;
+using backend.Filters;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<ApiExceptionFilter>())
+    .AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict);
+builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -13,6 +17,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddSingleton<IApplicationInfoService, ApplicationInfoService>();
+builder.Services.AddSingleton<ISupportTicketService, SupportTicketService>();
 
 var app = builder.Build();
 
