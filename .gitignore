@@ -432,3 +432,5 @@ FodyWeavers.xsd
 
 dist/
 .DS_Store
+**/bin/
+**/obj/
