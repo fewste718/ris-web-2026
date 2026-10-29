@@ -1,0 +1,57 @@
+RUN: db/schema.sql
+BEGIN
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+psql:db/schema.sql:7: NOTICE:  table "support_tickets" does not exist, skipping
+psql:db/schema.sql:8: NOTICE:  table "equipment" does not exist, skipping
+psql:db/schema.sql:9: NOTICE:  table "users" does not exist, skipping
+psql:db/schema.sql:10: NOTICE:  table "clients" does not exist, skipping
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+COMMIT
+RUN: db/schema.sql
+BEGIN
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+COMMIT
+RUN: db/seed.sql
+BEGIN
+INSERT 0 2
+INSERT 0 2
+INSERT 0 3
+INSERT 0 6
+ setval
+--------
+      4
+(1 row)
+
+ setval
+--------
+      8
+(1 row)
+
+ setval
+--------
+      3
+(1 row)
+
+ setval
+--------
+      6
+(1 row)
+
+COMMIT

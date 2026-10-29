@@ -1,0 +1,64 @@
+-- 1. Фильтр: новые заявки, сначала самые поздние.
+SELECT number, title, status, created_at
+FROM support_tickets
+WHERE status = 'New'
+ORDER BY created_at DESC, id DESC;
++---------------+----------------------------------+--------+------------------------+
+|    number     |              title               | status |       created_at       |
++---------------+----------------------------------+--------+------------------------+
+| SUP-2026-0005 | Требуется настроить сканирование | New    | 2026-10-29 06:00:00+00 |
+| SUP-2026-0001 | Не печатает сетевой принтер      | New    | 2026-10-27 08:00:00+00 |
++---------------+----------------------------------+--------+------------------------+
+(2 rows)
+
+-- 2. Сортировка: весь реестр от новых записей к старым.
+SELECT number, status, created_at
+FROM support_tickets
+ORDER BY created_at DESC, id DESC;
++---------------+------------+------------------------+
+|    number     |   status   |       created_at       |
++---------------+------------+------------------------+
+| SUP-2026-0006 | InProgress | 2026-10-29 07:00:00+00 |
+| SUP-2026-0005 | New        | 2026-10-29 06:00:00+00 |
+| SUP-2026-0004 | Cancelled  | 2026-10-28 09:00:00+00 |
+| SUP-2026-0003 | Closed     | 2026-10-28 07:00:00+00 |
+| SUP-2026-0002 | InProgress | 2026-10-27 10:00:00+00 |
+| SUP-2026-0001 | New        | 2026-10-27 08:00:00+00 |
++---------------+------------+------------------------+
+(6 rows)
+
+-- 3. JOIN: названия оборудования и клиента, назначенный инженер.
+-- LEFT JOIN сохраняет в результате заявку без назначенного исполнителя.
+SELECT t.number, e.name AS equipment_name, c.name AS client_name,
+       u.full_name AS assignee_name, t.status
+FROM support_tickets AS t
+JOIN equipment AS e ON e.id = t.equipment_id
+JOIN clients AS c ON c.id = e.client_id
+LEFT JOIN users AS u ON u.id = t.assignee_user_id
+ORDER BY t.created_at DESC, t.id DESC;
++---------------+--------------------+-------------+---------------+------------+
+|    number     |   equipment_name   | client_name | assignee_name |   status   |
++---------------+--------------------+-------------+---------------+------------+
+| SUP-2026-0006 | Файловый сервер 01 | Клиент Б    | Инженер 2     | InProgress |
+| SUP-2026-0005 | Сетевой принтер 01 | Клиент А    | Инженер 2     | New        |
+| SUP-2026-0004 | Сетевой принтер 01 | Клиент А    | Инженер 1     | Cancelled  |
+| SUP-2026-0003 | Сетевой принтер 01 | Клиент А    | Инженер 2     | Closed     |
+| SUP-2026-0002 | Файловый сервер 01 | Клиент Б    | Инженер 1     | InProgress |
+| SUP-2026-0001 | Сетевой принтер 01 | Клиент А    | NULL          | New        |
++---------------+--------------------+-------------+---------------+------------+
+(6 rows)
+
+-- 4. GROUP BY: количество заявок в каждом из четырёх статусов.
+SELECT status, COUNT(*) AS ticket_count
+FROM support_tickets
+GROUP BY status
+ORDER BY status;
++------------+--------------+
+|   status   | ticket_count |
++------------+--------------+
+| Cancelled  |            1 |
+| Closed     |            1 |
+| InProgress |            2 |
+| New        |            2 |
++------------+--------------+
+(4 rows)

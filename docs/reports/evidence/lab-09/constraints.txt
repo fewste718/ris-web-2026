@@ -1,0 +1,178 @@
+CHECK: Учебные строки: 2 клиента, 2 оборудования, 3 сотрудника, 6 заявок
+SQL: SELECT (SELECT COUNT(*) FROM clients), (SELECT COUNT(*) FROM equipment), (SELECT COUNT(*) FROM users), (SELECT COUNT(*) FROM support_tickets);
+2|2|3|6
+PASS: True
+
+CHECK: Два обязательных индекса
+SQL: SELECT COUNT(*) FROM pg_indexes WHERE schemaname = 'public' AND indexname IN ('support_tickets_status_idx', 'support_tickets_equipment_id_idx');
+2
+PASS: True
+
+CHECK: Клиент не дублируется в таблице заявок
+SQL: SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='public' AND table_name='support_tickets' AND column_name='client_id';
+0
+PASS: True
+
+CHECK: CHECK: статус Done отклонён
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BAD-STATUS','Проверка статуса','Проверка ограничения статусов.',7,'Done',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23514: new row for relation "support_tickets" violates check constraint "support_tickets_status_check"
+DETAIL:  Failing row contains (101, BAD-STATUS, Проверка статуса, Проверка ограничения статусов., 7, Done, 2026-10-29 15:46:53.036093+00, 1, null).
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_status_check
+LOCATION:  ExecConstraints, execMain.c:2081
+PASS: True
+
+CHECK: FK: несуществующее оборудование отклонено
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BAD-EQUIPMENT','Проверка ссылки','Проверка внешнего ключа оборудования.',999999,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23503: insert or update on table "support_tickets" violates foreign key constraint "support_tickets_equipment_id_fkey"
+DETAIL:  Key (equipment_id)=(999999) is not present in table "equipment".
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_equipment_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2783
+PASS: True
+
+CHECK: FK: несуществующий автор отклонён
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BAD-AUTHOR','Проверка автора','Проверка внешнего ключа автора.',7,'New',999999,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23503: insert or update on table "support_tickets" violates foreign key constraint "support_tickets_created_by_user_id_fkey"
+DETAIL:  Key (created_by_user_id)=(999999) is not present in table "users".
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_created_by_user_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2783
+PASS: True
+
+CHECK: FK: несуществующий исполнитель отклонён
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BAD-ASSIGNEE','Проверка инженера','Проверка внешнего ключа исполнителя.',7,'New',1,999999); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23503: insert or update on table "support_tickets" violates foreign key constraint "support_tickets_assignee_user_id_fkey"
+DETAIL:  Key (assignee_user_id)=(999999) is not present in table "users".
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_assignee_user_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2783
+PASS: True
+
+CHECK: FK: оборудование без клиента отклонено
+SQL: BEGIN; INSERT INTO equipment(id,name,client_id) VALUES (101,'Учебное оборудование',999999); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23503: insert or update on table "equipment" violates foreign key constraint "equipment_client_id_fkey"
+DETAIL:  Key (client_id)=(999999) is not present in table "clients".
+SCHEMA NAME:  public
+TABLE NAME:  equipment
+CONSTRAINT NAME:  equipment_client_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2783
+PASS: True
+
+CHECK: UNIQUE: повтор номера заявки отклонён
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'SUP-2026-0001','Проверка номера','Проверка уникальности номера заявки.',7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23505: duplicate key value violates unique constraint "support_tickets_number_key"
+DETAIL:  Key (number)=(SUP-2026-0001) already exists.
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_number_key
+LOCATION:  _bt_check_unique, nbtinsert.c:673
+PASS: True
+
+CHECK: NOT NULL: оборудование обязательно
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BAD-NULL','Проверка поля','Проверка обязательной ссылки оборудования.',NULL,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23502: null value in column "equipment_id" of relation "support_tickets" violates not-null constraint
+DETAIL:  Failing row contains (101, BAD-NULL, Проверка поля, Проверка обязательной ссылки обор..., null, New, 2026-10-29 15:46:53.318887+00, 1, null).
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+COLUMN NAME:  equipment_id
+LOCATION:  ReportNotNullViolationError, execMain.c:2219
+PASS: True
+
+CHECK: CHECK: тема из 4 символов отклонена
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'SHORT-TITLE',repeat('я',4),repeat('я',10),7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23514: new row for relation "support_tickets" violates check constraint "support_tickets_title_check"
+DETAIL:  Failing row contains (101, SHORT-TITLE, яяяя, яяяяяяяяяя, 7, New, 2026-10-29 15:46:53.360243+00, 1, null).
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_title_check
+LOCATION:  ExecConstraints, execMain.c:2081
+PASS: True
+
+CHECK: Тема из 81 символа отклонена
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'LONG-TITLE',repeat('я',81),repeat('я',10),7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  22001: value too long for type character varying(80)
+LOCATION:  varchar, varchar.c:640
+PASS: True
+
+CHECK: CHECK: описание из 9 символов отклонено
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'SHORT-DESCRIPTION',repeat('я',5),repeat('я',9),7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23514: new row for relation "support_tickets" violates check constraint "support_tickets_description_check"
+DETAIL:  Failing row contains (101, SHORT-DESCRIPTION, яяяяя, яяяяяяяяя, 7, New, 2026-10-29 15:46:53.451992+00, 1, null).
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_description_check
+LOCATION:  ExecConstraints, execMain.c:2081
+PASS: True
+
+CHECK: Описание из 501 символа отклонено
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'LONG-DESCRIPTION',repeat('я',5),repeat('я',501),7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  22001: value too long for type character varying(500)
+LOCATION:  varchar, varchar.c:640
+PASS: True
+
+CHECK: CHECK: пробелы по краям темы отклонены
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'PADDED-TITLE','  Проверка  ',repeat('я',10),7,'New',1,NULL); ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23514: new row for relation "support_tickets" violates check constraint "support_tickets_title_check"
+DETAIL:  Failing row contains (101, PADDED-TITLE,   Проверка  , яяяяяяяяяя, 7, New, 2026-10-29 15:46:53.674674+00, 1, null).
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_title_check
+LOCATION:  ExecConstraints, execMain.c:2081
+PASS: True
+
+CHECK: Нижние границы: 5 и 10 символов допустимы
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BOUND-LOW',repeat('я',5),repeat('я',10),7,'New',1,NULL); SELECT 'BOUND_LOW_OK'; ROLLBACK;
+BEGIN
+INSERT 0 1
+BOUND_LOW_OK
+ROLLBACK
+PASS: True
+
+CHECK: Верхние границы: 80 и 500 символов допустимы
+SQL: BEGIN; INSERT INTO support_tickets (id,number,title,description,equipment_id,status,created_by_user_id,assignee_user_id) VALUES (101,'BOUND-HIGH',repeat('я',80),repeat('я',500),7,'New',1,NULL); SELECT 'BOUND_HIGH_OK'; ROLLBACK;
+BEGIN
+INSERT 0 1
+BOUND_HIGH_OK
+ROLLBACK
+PASS: True
+
+CHECK: Авто-ID после seed, New, NULL и дата по умолчанию
+SQL: BEGIN; INSERT INTO support_tickets(number,title,description,equipment_id,created_by_user_id) VALUES ('DEFAULTS','Проверка значений','Проверка значений по умолчанию.',7,1) RETURNING (id > 6), status, (assignee_user_id IS NULL), (created_at IS NOT NULL); ROLLBACK;
+BEGIN
+t|New|t|t
+INSERT 0 1
+ROLLBACK
+PASS: True
+
+CHECK: Используемое оборудование нельзя удалить
+SQL: BEGIN; DELETE FROM equipment WHERE id=7; ROLLBACK;
+BEGIN
+psql:C:/Users/panti/OneDrive/Desktop/WEB/lab09-local/verify-current.sql:1: ERROR:  23001: update or delete on table "equipment" violates RESTRICT setting of foreign key constraint "support_tickets_equipment_id_fkey" on table "support_tickets"
+DETAIL:  Key (id)=(7) is referenced from table "support_tickets".
+SCHEMA NAME:  public
+TABLE NAME:  support_tickets
+CONSTRAINT NAME:  support_tickets_equipment_id_fkey
+LOCATION:  ri_ReportViolation, ri_triggers.c:2797
+PASS: True
+
+CHECK: После всех проверок в базе осталось 6 исходных заявок
+SQL: SELECT COUNT(*), MIN(id), MAX(id) FROM support_tickets;
+6|1|6
+PASS: True

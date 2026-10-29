@@ -1,0 +1,128 @@
+{
+  "checkedAt": "2026-10-29T18:46:54+03:00",
+  "checks": 20,
+  "passed": 20,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Учебные строки: 2 клиента, 2 оборудования, 3 сотрудника, 6 заявок",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "Два обязательных индекса",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "Клиент не дублируется в таблице заявок",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "CHECK: статус Done отклонён",
+      "passed": true,
+      "expectedSqlState": "23514",
+      "exitCode": 3
+    },
+    {
+      "name": "FK: несуществующее оборудование отклонено",
+      "passed": true,
+      "expectedSqlState": "23503",
+      "exitCode": 3
+    },
+    {
+      "name": "FK: несуществующий автор отклонён",
+      "passed": true,
+      "expectedSqlState": "23503",
+      "exitCode": 3
+    },
+    {
+      "name": "FK: несуществующий исполнитель отклонён",
+      "passed": true,
+      "expectedSqlState": "23503",
+      "exitCode": 3
+    },
+    {
+      "name": "FK: оборудование без клиента отклонено",
+      "passed": true,
+      "expectedSqlState": "23503",
+      "exitCode": 3
+    },
+    {
+      "name": "UNIQUE: повтор номера заявки отклонён",
+      "passed": true,
+      "expectedSqlState": "23505",
+      "exitCode": 3
+    },
+    {
+      "name": "NOT NULL: оборудование обязательно",
+      "passed": true,
+      "expectedSqlState": "23502",
+      "exitCode": 3
+    },
+    {
+      "name": "CHECK: тема из 4 символов отклонена",
+      "passed": true,
+      "expectedSqlState": "23514",
+      "exitCode": 3
+    },
+    {
+      "name": "Тема из 81 символа отклонена",
+      "passed": true,
+      "expectedSqlState": "22001",
+      "exitCode": 3
+    },
+    {
+      "name": "CHECK: описание из 9 символов отклонено",
+      "passed": true,
+      "expectedSqlState": "23514",
+      "exitCode": 3
+    },
+    {
+      "name": "Описание из 501 символа отклонено",
+      "passed": true,
+      "expectedSqlState": "22001",
+      "exitCode": 3
+    },
+    {
+      "name": "CHECK: пробелы по краям темы отклонены",
+      "passed": true,
+      "expectedSqlState": "23514",
+      "exitCode": 3
+    },
+    {
+      "name": "Нижние границы: 5 и 10 символов допустимы",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "Верхние границы: 80 и 500 символов допустимы",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "Авто-ID после seed, New, NULL и дата по умолчанию",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    },
+    {
+      "name": "Используемое оборудование нельзя удалить",
+      "passed": true,
+      "expectedSqlState": "23001",
+      "exitCode": 3
+    },
+    {
+      "name": "После всех проверок в базе осталось 6 исходных заявок",
+      "passed": true,
+      "expectedSqlState": "",
+      "exitCode": 0
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+waiting for server to shut down.... done
+server stopped
+127.0.0.1:55439 - no response
+pg_ctl start: exitCode=0; server started.
+No schema.sql or seed.sql executed between the snapshots.
+Before startedAt: 10/29/2026 18:47:40
+After startedAt: 10/29/2026 18:49:43
+Before fingerprint: 03345496801ed518d5e7d13cb79b6d39
+After fingerprint: 03345496801ed518d5e7d13cb79b6d39
+Data preserved: True
+PostgreSQL restarted: True

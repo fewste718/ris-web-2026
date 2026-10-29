@@ -1,0 +1,80 @@
+{
+  "database": "mobius_support_lab09",
+  "version": "18.4",
+  "startedAt": "2026-10-29T18:49:43.013173+03:00",
+  "fingerprint": "03345496801ed518d5e7d13cb79b6d39",
+  "counts": {
+    "clients": 2,
+    "equipment": 2,
+    "users": 3,
+    "tickets": 6
+  },
+  "tickets": [
+    {
+      "id": 1,
+      "number": "SUP-2026-0001",
+      "title": "Не печатает сетевой принтер",
+      "description": "После отправки документа принтер не начинает печать.",
+      "equipment_id": 7,
+      "status": "New",
+      "created_at": "2026-10-27T11:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": null
+    },
+    {
+      "id": 2,
+      "number": "SUP-2026-0002",
+      "title": "Недоступна общая папка на сервере",
+      "description": "При открытии общей папки появляется ошибка доступа.",
+      "equipment_id": 8,
+      "status": "InProgress",
+      "created_at": "2026-10-27T13:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": 2
+    },
+    {
+      "id": 3,
+      "number": "SUP-2026-0003",
+      "title": "Принтер печатает полосами",
+      "description": "На распечатанных документах появились вертикальные полосы.",
+      "equipment_id": 7,
+      "status": "Closed",
+      "created_at": "2026-10-28T10:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": 3
+    },
+    {
+      "id": 4,
+      "number": "SUP-2026-0004",
+      "title": "Повторное обращение по принтеру",
+      "description": "Диспетчер отменил повторное обращение, исходная заявка сохранена.",
+      "equipment_id": 7,
+      "status": "Cancelled",
+      "created_at": "2026-10-28T12:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": 2
+    },
+    {
+      "id": 5,
+      "number": "SUP-2026-0005",
+      "title": "Требуется настроить сканирование",
+      "description": "Необходимо настроить отправку сканов в сетевую папку клиента.",
+      "equipment_id": 7,
+      "status": "New",
+      "created_at": "2026-10-29T09:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": 3
+    },
+    {
+      "id": 6,
+      "number": "SUP-2026-0006",
+      "title": "Сервер не отвечает на запросы",
+      "description": "Сотрудники клиента не могут подключиться к файловому серверу.",
+      "equipment_id": 8,
+      "status": "InProgress",
+      "created_at": "2026-10-29T10:00:00+03:00",
+      "created_by_user_id": 1,
+      "assignee_user_id": 3
+    }
+  ]
+}
