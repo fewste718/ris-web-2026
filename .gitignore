@@ -434,3 +434,8 @@ dist/
 .DS_Store
 **/bin/
 **/obj/
+
+# Local PostgreSQL backups
+*.dump
+*.backup
+*.sql.gz

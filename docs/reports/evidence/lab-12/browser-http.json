@@ -1,0 +1,251 @@
+{
+  "source": "Actual HTTP requests and responses recorded by the Vue client in the built-in browser",
+  "browserUsed": true,
+  "ticketId": 70,
+  "number": "SUP-2026-0068",
+  "note": "Для ответов списков сохранена выбранная заявка и количество строк. POST и PATCH сохранены полностью. Вход, пароли, Authorization и JWT не записывались.",
+  "entries": [
+    {
+      "timestamp": "2026-11-02T19:08:47.048Z",
+      "method": "POST",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 201,
+      "request": {
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди."
+      },
+      "response": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:08:47.075Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 66,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:10:12.238Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 66,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:10:21.795Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 66,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:10:42.598Z",
+      "method": "PATCH",
+      "url": "http://localhost:5000/api/support-tickets/70/assignee",
+      "status": 200,
+      "request": {
+        "assigneeUserId": 2
+      },
+      "response": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:10:42.611Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 66,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:10:57.061Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 13,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:11:05.760Z",
+      "method": "PATCH",
+      "url": "http://localhost:5000/api/support-tickets/70/status",
+      "status": 200,
+      "request": {
+        "status": "InProgress"
+      },
+      "response": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "InProgress",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:11:05.766Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 13,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "InProgress",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-02T19:12:29.617Z",
+      "method": "GET",
+      "url": "http://localhost:5000/api/support-tickets",
+      "status": 200,
+      "request": null,
+      "responseType": "list",
+      "returnedCount": 13,
+      "ticketFromList": {
+        "id": 70,
+        "number": "SUP-2026-0068",
+        "title": "Не печатает принтер после замены картриджа",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+        "status": "InProgress",
+        "createdByUserId": 1,
+        "assigneeUserId": 2,
+        "assigneeFullName": "Инженер 1",
+        "createdAt": "2026-11-02T19:08:47.034264+00:00"
+      }
+    }
+  ]
+}

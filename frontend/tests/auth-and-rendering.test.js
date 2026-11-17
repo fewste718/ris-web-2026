@@ -60,7 +60,7 @@ before(async () => {
   // Загружаем настоящие модули и SFC. Сервер HTTP и браузер не запускаются.
   server = await createServer({
     root: fileURLToPath(new URL('../', import.meta.url)),
-    configFile: false, publicDir: false, plugins: [vue()],
+    configFile: false, envDir: false, publicDir: false, plugins: [vue()],
     server: { middlewareMode: true, hmr: false, watch: null },
   })
   session = await server.ssrLoadModule('/src/auth/session.js')

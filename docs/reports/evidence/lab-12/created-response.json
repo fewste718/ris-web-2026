@@ -1,0 +1,15 @@
+{
+  "id": 70,
+  "number": "SUP-2026-0068",
+  "title": "Не печатает принтер после замены картриджа",
+  "equipmentId": 7,
+  "equipmentName": "Сетевой принтер 01",
+  "clientId": 3,
+  "clientName": "Клиент А",
+  "description": "После замены картриджа сетевой принтер не печатает документы из общей очереди.",
+  "status": "New",
+  "createdByUserId": 1,
+  "assigneeUserId": null,
+  "assigneeFullName": null,
+  "createdAt": "2026-11-02T19:08:47.034264+00:00"
+}

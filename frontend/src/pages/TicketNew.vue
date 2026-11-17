@@ -1,8 +1,9 @@
 <script setup>
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { equipment } from '../equipment.js'
 import { createTicket } from '../api/tickets.js'
+import { getEquipment } from '../api/references.js'
+import { getSessionGeneration } from '../auth/session.js'
 
 const router = useRouter()
 const titleInput = ref(null)
@@ -13,6 +14,31 @@ const form = ref(emptyForm())
 const errors = ref({})
 const submitting = ref(false)
 const requestError = ref('')
+const equipment = ref([])
+const equipmentState = ref('loading')
+const equipmentError = ref('')
+let equipmentVersion = 0
+let disposed = false
+
+onBeforeUnmount(() => { disposed = true; equipmentVersion++ })
+
+async function loadEquipment() {
+  if (disposed) return
+  const generation = getSessionGeneration()
+  const version = ++equipmentVersion
+  equipmentState.value = 'loading'
+  equipmentError.value = ''
+  try {
+    const loaded = await getEquipment()
+    if (disposed || getSessionGeneration() !== generation || version !== equipmentVersion) return
+    equipment.value = loaded
+    equipmentState.value = loaded.length ? 'data' : 'empty'
+  } catch (error) {
+    if (disposed || getSessionGeneration() !== generation || version !== equipmentVersion) return
+    equipmentError.value = error.message
+    equipmentState.value = 'error'
+  }
+}
 
 function validate(values) {
   const result = {}
@@ -20,7 +46,7 @@ function validate(values) {
     result.title = 'Тема: от 5 до 80 символов.'
   }
   if (!Number.isInteger(values.equipmentId) || values.equipmentId <= 0
-    || !equipment.some((item) => item.id === values.equipmentId)) {
+    || !equipment.value.some((item) => item.id === values.equipmentId)) {
     result.equipmentId = 'Выберите оборудование из списка.'
   }
   if (values.description.length < 10 || values.description.length > 500) {
@@ -30,7 +56,8 @@ function validate(values) {
 }
 
 async function onCreate() {
-  if (submitting.value) return
+  if (disposed || submitting.value || equipmentState.value !== 'data') return
+  const generation = getSessionGeneration()
 
   const values = {
     title: form.value.title.trim(),
@@ -41,6 +68,7 @@ async function onCreate() {
   requestError.value = ''
   if (Object.keys(errors.value).length) {
     await nextTick()
+    if (disposed || getSessionGeneration() !== generation) return
     const invalidInput = errors.value.title ? titleInput
       : errors.value.equipmentId ? equipmentInput : descriptionInput
     invalidInput.value?.focus()
@@ -50,18 +78,21 @@ async function onCreate() {
   submitting.value = true
   try {
     await createTicket(values)
+    if (disposed || getSessionGeneration() !== generation) return
     errors.value = {}
     form.value = emptyForm()
     await router.push('/')
   } catch (error) {
+    if (disposed || getSessionGeneration() !== generation) return
     requestError.value = error.message
     errors.value = error.errors ?? {}
   } finally {
-    submitting.value = false
+    if (!disposed && getSessionGeneration() === generation) submitting.value = false
   }
 }
 
 onMounted(() => {
+  loadEquipment()
   titleInput.value?.focus()
 })
 </script>
@@ -81,10 +112,13 @@ onMounted(() => {
       </div>
       <div class="field">
         <label for="equipmentId">Оборудование</label>
-        <select id="equipmentId" ref="equipmentInput" v-model.number="form.equipmentId" name="equipmentId" required :aria-invalid="Boolean(errors.equipmentId)" :aria-describedby="errors.equipmentId ? 'equipment-error' : undefined">
+        <select id="equipmentId" ref="equipmentInput" v-model.number="form.equipmentId" name="equipmentId" required :disabled="submitting || equipmentState !== 'data'" :aria-invalid="Boolean(errors.equipmentId)" :aria-describedby="errors.equipmentId ? 'equipment-error' : undefined">
           <option :value="0" disabled>Выберите оборудование</option>
           <option v-for="item in equipment" :key="item.id" :value="item.id">{{ item.name }} · {{ item.clientName }} · № {{ item.id }}</option>
         </select>
+        <p v-if="equipmentState === 'loading'" class="field-help" role="status">Загружаем оборудование…</p>
+        <p v-else-if="equipmentState === 'empty'" class="field-help" role="status">В справочнике пока нет оборудования.</p>
+        <div v-else-if="equipmentState === 'error'" class="field-error" role="alert"><p>Не удалось загрузить оборудование. {{ equipmentError }}</p><button type="button" class="button button-secondary" @click="loadEquipment">Повторить загрузку оборудования</button></div>
         <p v-if="errors.equipmentId" id="equipment-error" class="field-error" role="alert">{{ errors.equipmentId }}</p>
       </div>
       <div class="field">
@@ -95,7 +129,7 @@ onMounted(() => {
       </div>
       <p v-if="requestError" class="request-error" role="alert">{{ requestError }}</p>
       <div class="form-actions">
-        <button class="button button-primary" type="submit" :disabled="submitting">{{ submitting ? 'Создаём…' : 'Создать заявку' }}</button>
+        <button class="button button-primary" type="submit" :disabled="submitting || equipmentState !== 'data'">{{ submitting ? 'Создаём…' : 'Создать заявку' }}</button>
         <router-link class="button button-secondary" to="/">К списку</router-link>
       </div>
     </form>

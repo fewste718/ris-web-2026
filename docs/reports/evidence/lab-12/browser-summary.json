@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "browserUsed": true,
+  "browser": "Chromium",
+  "ticketId": 70,
+  "number": "SUP-2026-0068",
+  "createHttpStatus": 201,
+  "assignHttpStatus": 200,
+  "startHttpStatus": 200,
+  "assignedEngineerId": 2,
+  "finalStatus": "InProgress",
+  "beforePid": 11488,
+  "afterPid": 20352,
+  "apiWasUnavailable": true,
+  "sameApiResponse": true,
+  "sameDatabaseRow": true,
+  "uiAfterRestart": true,
+  "images": [
+    "created.jpg",
+    "assigned.jpg",
+    "in-progress.jpg",
+    "after-restart.jpg"
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "verification": "Actual frontend modules with the real API, without a browser",
+  "browserUsed": false,
+  "rendering": "SSR of actual TicketTable.vue",
+  "checkedAt": "2026-11-02T19:20:08.670Z",
+  "status": "passed",
+  "checks": 11,
+  "passed": 11,
+  "failures": 0,
+  "createdTicket": {
+    "id": 71,
+    "number": "SUP-2026-0069",
+    "status": "InProgress",
+    "assigneeUserId": 2
+  },
+  "results": [
+    {
+      "name": "Dispatcher signs in through the actual frontend auth module",
+      "passed": true
+    },
+    {
+      "name": "Equipment list is loaded from PostgreSQL through the API",
+      "passed": true
+    },
+    {
+      "name": "Engineer list is loaded through the API without credentials",
+      "passed": true
+    },
+    {
+      "name": "Frontend creates a real ticket with a server ID and number",
+      "passed": true
+    },
+    {
+      "name": "Assignment preserves the ID, number and New status",
+      "passed": true
+    },
+    {
+      "name": "Engineer performs a second real login",
+      "passed": true
+    },
+    {
+      "name": "Engineer sees the same assigned New ticket",
+      "passed": true
+    },
+    {
+      "name": "Engineer starts the same ticket with a separate status PATCH",
+      "passed": true
+    },
+    {
+      "name": "Real InProgress filter preserves engineer visibility",
+      "passed": true
+    },
+    {
+      "name": "Actual table renders ID, number, assignee, status and correct role action",
+      "passed": true
+    },
+    {
+      "name": "Second engineer cannot see or modify the ticket",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/equipment",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/users?role=Engineer",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets",
+      "method": "POST",
+      "status": 201,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets/71/assignee",
+      "method": "PATCH",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets?status=New",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets/71/status",
+      "method": "PATCH",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets?status=InProgress",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets?status=InProgress",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets/71/status",
+      "method": "PATCH",
+      "status": 403,
+      "tokenPresent": true
+    }
+  ]
+}

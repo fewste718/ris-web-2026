@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test tests/auth-and-rendering.test.js",
-    "test:integration": "node scripts/verify-integration.mjs"
+    "test": "node --test --test-concurrency=1 tests/auth-and-rendering.test.js tests/workflow.test.js",
+    "test:integration": "node scripts/verify-integration.mjs",
+    "test:workflow": "node scripts/verify-workflow.mjs"
   },
   "dependencies": {
     "vue": "^3.5.42",

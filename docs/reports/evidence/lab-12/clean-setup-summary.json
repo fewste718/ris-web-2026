@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "sourceFilesCopied": 211,
+  "copiedGitDirectory": false,
+  "copiedNodeModules": false,
+  "copiedBuildOutputs": false,
+  "copiedLocalEnv": false,
+  "dependencyRestore": true,
+  "migrationsApplied": true,
+  "frontendBuild": true,
+  "freshDatabase": "mobius_support_lr12_clean_20261102222417",
+  "isolatedValidationPort": 5001,
+  "mainApplicationPorts": [
+    5173,
+    5000
+  ],
+  "healthStatus": 200,
+  "loginStatus": 200,
+  "equipmentCount": 2,
+  "engineerCount": 2,
+  "ticketCount": 0,
+  "checkedByAnotherPerson": false,
+  "note": "Автоматизированная подготовка из чистой копии и запуск отдельного API с новой БД. Для изоляции использован порт 5001; основной стенд остаётся на 5173/5000. Проверка другим человеком по README не проводилась."
+}
