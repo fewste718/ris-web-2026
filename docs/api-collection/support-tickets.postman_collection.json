@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "ЛР8 — заявки технической поддержки",
-    "description": "Запускать по порядку после перезапуска backend. baseUrl=http://localhost:5000, ресурс support-tickets. Учебный X-User-Id: 1 — диспетчер, 2 и 3 — инженеры. ticketId и cancelTicketId заполняются из ответов POST. Данные находятся в памяти, после перезапуска сервера исчезают.",
+    "name": "Заявки технической поддержки — проверки API",
+    "description": "Запускать по порядку на новой учебной БД после применения миграций: первый запрос ожидает отсутствие заявок. baseUrl=http://localhost:5000, ресурс support-tickets. Учебный X-User-Id: 1 — диспетчер, 2 и 3 — инженеры. ticketId и cancelTicketId заполняются из ответов POST. Заявки сохраняются в PostgreSQL; перезапуск backend не очищает базу.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -24,7 +24,7 @@
   ],
   "item": [
     {
-      "name": "01 Список после перезапуска — 200 и []",
+      "name": "01 Пустой список в новой БД — 200 и []",
       "request": {
         "method": "GET",
         "header": [

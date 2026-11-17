@@ -1,3 +1,8 @@
 namespace backend.Models;
 
-public sealed record Equipment(int Id, string Name, int ClientId);
+public sealed class Equipment
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int ClientId { get; set; }
+}

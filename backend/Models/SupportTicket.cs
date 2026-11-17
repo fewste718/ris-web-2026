@@ -2,7 +2,7 @@ namespace backend.Models;
 
 public sealed class SupportTicket
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
     public required string Number { get; init; }
     public required string Title { get; init; }
     public required string Description { get; init; }

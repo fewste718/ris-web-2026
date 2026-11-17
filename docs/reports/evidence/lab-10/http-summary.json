@@ -1,0 +1,164 @@
+{
+  "requests": 48,
+  "checks": 39,
+  "passed": 39,
+  "failed": 0,
+  "checksList": [
+    {
+      "name": "POST /api/support-tickets -> 201",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30/assignee -> 200",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30/status -> 200",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/30 -> 200",
+      "passed": true
+    },
+    {
+      "name": "После остановки API недоступен",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/30 -> 200",
+      "passed": true
+    },
+    {
+      "name": "PID API изменился после перезапуска",
+      "passed": true
+    },
+    {
+      "name": "Все поля JSON заявки совпадают до и после перезапуска API",
+      "passed": true
+    },
+    {
+      "name": "Все хранимые поля заявки в SQL совпадают до и после перезапуска API",
+      "passed": true
+    },
+    {
+      "name": "После рестарта сохранены назначение инженера 2 и InProgress",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/30 -> 200",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/30 -> 409",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 201",
+      "passed": true
+    },
+    {
+      "name": "Новый ID и номер после рестарта отличаются от прежних",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/999999 -> 404",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets -> 400",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets -> 400",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets?status=Done -> 400",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 409",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 400",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 400",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30/assignee -> 409",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/30 -> 200",
+      "passed": true
+    },
+    {
+      "name": "Отказ переназначения не изменил заявку",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30/status -> 200",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30/status -> 409",
+      "passed": true
+    },
+    {
+      "name": "DELETE /api/support-tickets/30 -> 405",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/30 -> 405",
+      "passed": true
+    },
+    {
+      "name": "Ответ заявки не содержит login или passwordHash",
+      "passed": true
+    },
+    {
+      "name": "20 параллельных POST вернули 201",
+      "passed": true
+    },
+    {
+      "name": "20 параллельных ID уникальны",
+      "passed": true
+    },
+    {
+      "name": "20 параллельных номеров уникальны",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 201",
+      "passed": true
+    },
+    {
+      "name": "PATCH /api/support-tickets/52/assignee -> 200",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets/52 -> 200",
+      "passed": true
+    },
+    {
+      "name": "Параллельные PATCH сохранили допустимое сочетание статуса и исполнителя",
+      "passed": true
+    },
+    {
+      "name": "POST /api/support-tickets -> 409",
+      "passed": true
+    },
+    {
+      "name": "Конфликт номера возвращает безопасный ProblemDetails без стека",
+      "passed": true
+    },
+    {
+      "name": "GET /api/support-tickets?status=New -> 200",
+      "passed": true
+    }
+  ]
+}

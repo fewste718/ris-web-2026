@@ -1,0 +1,6 @@
+{
+  "columnsMatch": true,
+  "foreignKeysMatch": true,
+  "checksMatch": true,
+  "uniqueIndexesMatch": true
+}

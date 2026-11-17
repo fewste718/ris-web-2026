@@ -1,3 +1,7 @@
 namespace backend.Models;
 
-public sealed record Client(int Id, string Name);
+public sealed class Client
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+}

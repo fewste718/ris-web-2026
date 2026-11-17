@@ -1,0 +1,9 @@
+{
+  "beforePid": 7092,
+  "afterPid": 16400,
+  "ticketId": 30,
+  "number": "SUP-2026-0029",
+  "apiWasUnavailable": true,
+  "sameApiJson": true,
+  "sameDatabaseRow": true
+}

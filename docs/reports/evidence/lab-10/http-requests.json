@@ -1,0 +1,1703 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Проверка сохранности после перезапуска",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30/assignee",
+    "userId": 1,
+    "request": {
+      "assigneeUserId": 2
+    },
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30/status",
+    "userId": 2,
+    "request": {
+      "status": "InProgress"
+    },
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/30",
+    "userId": 1,
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/30",
+    "userId": 1,
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/30",
+    "userId": 2,
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/30",
+    "userId": 3,
+    "request": null,
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Заявка не назначена этому инженеру.",
+      "status": 409,
+      "instance": "/api/support-tickets/30"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 8,
+      "title": "Новая заявка после перезапуска API",
+      "description": "Проверка уникальности номера после повторного запуска API."
+    },
+    "status": 201,
+    "response": {
+      "id": 31,
+      "number": "SUP-2026-0030",
+      "title": "Новая заявка после перезапуска API",
+      "equipmentId": 8,
+      "equipmentName": "Файловый сервер 01",
+      "clientId": 4,
+      "clientName": "Клиент Б",
+      "description": "Проверка уникальности номера после повторного запуска API.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.32375+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/999999",
+    "userId": 1,
+    "request": null,
+    "status": 404,
+    "response": {
+      "type": "about:blank",
+      "title": "Заявка не найдена.",
+      "status": 404,
+      "instance": "/api/support-tickets/999999"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets",
+    "userId": 0,
+    "request": null,
+    "status": 400,
+    "response": {
+      "type": "about:blank",
+      "title": "Укажите существующего сотрудника в X-User-Id.",
+      "status": 400,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets",
+    "userId": 999999,
+    "request": null,
+    "status": 400,
+    "response": {
+      "type": "about:blank",
+      "title": "Укажите существующего сотрудника в X-User-Id.",
+      "status": 400,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets?status=Done",
+    "userId": 1,
+    "request": null,
+    "status": 400,
+    "response": {
+      "type": "about:blank",
+      "title": "Допустимы New, InProgress, Closed, Cancelled.",
+      "status": 400,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 2,
+    "request": {
+      "equipmentId": 7,
+      "title": "Запрещённая заявка инженера",
+      "description": "Инженер не имеет права создавать заявки."
+    },
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Действие доступно только диспетчеру.",
+      "status": 409,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": "7",
+      "title": "Некорректный тип оборудования",
+      "description": "Вместо JSON-числа передана строка."
+    },
+    "status": 400,
+    "response": {
+      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+      "title": "One or more validation errors occurred.",
+      "status": 400,
+      "errors": {
+        "request": [
+          "The request field is required."
+        ],
+        "$.equipmentId": [
+          "The JSON value could not be converted to System.Int32. Path: $.equipmentId | LineNumber: 0 | BytePositionInLine: 18."
+        ]
+      },
+      "traceId": "00-84ea5c4aef440671bb2fe98c94f2dfcd-c5f15371144d536e-00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 999999,
+      "title": "Некорректная ссылка оборудования",
+      "description": "В справочнике отсутствует выбранное оборудование."
+    },
+    "status": 400,
+    "response": {
+      "type": "about:blank",
+      "title": "Оборудование или организация-клиент не найдены.",
+      "status": 400,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30/assignee",
+    "userId": 1,
+    "request": {
+      "assigneeUserId": 3
+    },
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Назначение разрешено только для новой заявки.",
+      "status": 409,
+      "instance": "/api/support-tickets/30/assignee"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/30",
+    "userId": 1,
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30/status",
+    "userId": 2,
+    "request": {
+      "status": "Closed"
+    },
+    "status": 200,
+    "response": {
+      "id": 30,
+      "number": "SUP-2026-0029",
+      "title": "Проверка сохранности после перезапуска",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Заявка создана через API для проверки сохранности в PostgreSQL.",
+      "status": "Closed",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:37.630245+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30/status",
+    "userId": 1,
+    "request": {
+      "status": "Cancelled"
+    },
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Переход запрещён: проверьте статус заявки и назначенного исполнителя.",
+      "status": 409,
+      "instance": "/api/support-tickets/30/status"
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/support-tickets/30",
+    "userId": 1,
+    "request": null,
+    "status": 405,
+    "response": null
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/30",
+    "userId": 1,
+    "request": {
+      "status": "New"
+    },
+    "status": 405,
+    "response": null
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 1",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 39,
+      "number": "SUP-2026-0031",
+      "title": "Параллельная заявка номер 1",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.590775+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 2",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 34,
+      "number": "SUP-2026-0035",
+      "title": "Параллельная заявка номер 2",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.631311+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 3",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 35,
+      "number": "SUP-2026-0036",
+      "title": "Параллельная заявка номер 3",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.634641+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 4",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 33,
+      "number": "SUP-2026-0034",
+      "title": "Параллельная заявка номер 4",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.628275+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 5",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 37,
+      "number": "SUP-2026-0038",
+      "title": "Параллельная заявка номер 5",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.64382+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 6",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 36,
+      "number": "SUP-2026-0037",
+      "title": "Параллельная заявка номер 6",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.644051+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 7",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 49,
+      "number": "SUP-2026-0048",
+      "title": "Параллельная заявка номер 7",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.735423+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 8",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 38,
+      "number": "SUP-2026-0039",
+      "title": "Параллельная заявка номер 8",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.660602+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 9",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 45,
+      "number": "SUP-2026-0032",
+      "title": "Параллельная заявка номер 9",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.593066+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 10",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 41,
+      "number": "SUP-2026-0041",
+      "title": "Параллельная заявка номер 10",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.668417+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 11",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 40,
+      "number": "SUP-2026-0040",
+      "title": "Параллельная заявка номер 11",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.666106+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 12",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 43,
+      "number": "SUP-2026-0043",
+      "title": "Параллельная заявка номер 12",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.687528+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 13",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 46,
+      "number": "SUP-2026-0045",
+      "title": "Параллельная заявка номер 13",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.706013+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 14",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 42,
+      "number": "SUP-2026-0042",
+      "title": "Параллельная заявка номер 14",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.677664+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 15",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 50,
+      "number": "SUP-2026-0049",
+      "title": "Параллельная заявка номер 15",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.803412+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 16",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 48,
+      "number": "SUP-2026-0047",
+      "title": "Параллельная заявка номер 16",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.713459+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 17",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 47,
+      "number": "SUP-2026-0046",
+      "title": "Параллельная заявка номер 17",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.710056+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 18",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 44,
+      "number": "SUP-2026-0044",
+      "title": "Параллельная заявка номер 18",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.691459+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 19",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 32,
+      "number": "SUP-2026-0033",
+      "title": "Параллельная заявка номер 19",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.595655+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Параллельная заявка номер 20",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL."
+    },
+    "status": 201,
+    "response": {
+      "id": 51,
+      "number": "SUP-2026-0050",
+      "title": "Параллельная заявка номер 20",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.804891+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Проверка одновременных действий",
+      "description": "Одновременное переназначение и начало работы инженером."
+    },
+    "status": 201,
+    "response": {
+      "id": 52,
+      "number": "SUP-2026-0051",
+      "title": "Проверка одновременных действий",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Одновременное переназначение и начало работы инженером.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": null,
+      "assigneeFullName": null,
+      "createdAt": "2026-10-31T11:35:42.830229+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/52/assignee",
+    "userId": 1,
+    "request": {
+      "assigneeUserId": 2
+    },
+    "status": 200,
+    "response": {
+      "id": 52,
+      "number": "SUP-2026-0051",
+      "title": "Проверка одновременных действий",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Одновременное переназначение и начало работы инженером.",
+      "status": "New",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:42.830229+03:00"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/52/assignee",
+    "userId": 1,
+    "request": {
+      "assigneeUserId": 3
+    },
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Назначение разрешено только для новой заявки.",
+      "status": 409,
+      "instance": "/api/support-tickets/52/assignee"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/support-tickets/52/status",
+    "userId": 2,
+    "request": {
+      "status": "InProgress"
+    },
+    "status": 200,
+    "response": {
+      "id": 52,
+      "number": "SUP-2026-0051",
+      "title": "Проверка одновременных действий",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Одновременное переназначение и начало работы инженером.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:42.830229+03:00"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets/52",
+    "userId": 1,
+    "request": null,
+    "status": 200,
+    "response": {
+      "id": 52,
+      "number": "SUP-2026-0051",
+      "title": "Проверка одновременных действий",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Одновременное переназначение и начало работы инженером.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:42.830229+03:00"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/support-tickets",
+    "userId": 1,
+    "request": {
+      "equipmentId": 7,
+      "title": "Попытка повторить номер заявки",
+      "description": "Проверка ответа API при конфликте уникального номера."
+    },
+    "status": 409,
+    "response": {
+      "type": "about:blank",
+      "title": "Заявка с таким номером уже существует.",
+      "status": 409,
+      "instance": "/api/support-tickets"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/support-tickets?status=New",
+    "userId": 1,
+    "request": null,
+    "status": 200,
+    "response": [
+      {
+        "id": 4,
+        "number": "SUP-2026-0004",
+        "title": "Новая заявка после перезапуска API",
+        "equipmentId": 8,
+        "equipmentName": "Файловый сервер 01",
+        "clientId": 4,
+        "clientName": "Клиент Б",
+        "description": "Проверка уникальности номера после повторного запуска API.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:26:27.254735+03:00"
+      },
+      {
+        "id": 6,
+        "number": "SUP-2026-0006",
+        "title": "Новая заявка после перезапуска API",
+        "equipmentId": 8,
+        "equipmentName": "Файловый сервер 01",
+        "clientId": 4,
+        "clientName": "Клиент Б",
+        "description": "Проверка уникальности номера после повторного запуска API.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.005618+03:00"
+      },
+      {
+        "id": 7,
+        "number": "SUP-2026-0007",
+        "title": "Параллельная заявка номер 14",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.319633+03:00"
+      },
+      {
+        "id": 8,
+        "number": "SUP-2026-0008",
+        "title": "Параллельная заявка номер 2",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.356975+03:00"
+      },
+      {
+        "id": 9,
+        "number": "SUP-2026-0009",
+        "title": "Параллельная заявка номер 4",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.361012+03:00"
+      },
+      {
+        "id": 10,
+        "number": "SUP-2026-0010",
+        "title": "Параллельная заявка номер 3",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.364301+03:00"
+      },
+      {
+        "id": 11,
+        "number": "SUP-2026-0011",
+        "title": "Параллельная заявка номер 6",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.36737+03:00"
+      },
+      {
+        "id": 12,
+        "number": "SUP-2026-0012",
+        "title": "Параллельная заявка номер 7",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.383324+03:00"
+      },
+      {
+        "id": 13,
+        "number": "SUP-2026-0013",
+        "title": "Параллельная заявка номер 5",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.386824+03:00"
+      },
+      {
+        "id": 14,
+        "number": "SUP-2026-0014",
+        "title": "Параллельная заявка номер 11",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.402376+03:00"
+      },
+      {
+        "id": 15,
+        "number": "SUP-2026-0015",
+        "title": "Параллельная заявка номер 10",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.407517+03:00"
+      },
+      {
+        "id": 16,
+        "number": "SUP-2026-0016",
+        "title": "Параллельная заявка номер 12",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.412967+03:00"
+      },
+      {
+        "id": 17,
+        "number": "SUP-2026-0017",
+        "title": "Параллельная заявка номер 8",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.415868+03:00"
+      },
+      {
+        "id": 18,
+        "number": "SUP-2026-0018",
+        "title": "Параллельная заявка номер 15",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.418813+03:00"
+      },
+      {
+        "id": 19,
+        "number": "SUP-2026-0019",
+        "title": "Параллельная заявка номер 16",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.425955+03:00"
+      },
+      {
+        "id": 20,
+        "number": "SUP-2026-0020",
+        "title": "Параллельная заявка номер 19",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.432353+03:00"
+      },
+      {
+        "id": 21,
+        "number": "SUP-2026-0021",
+        "title": "Параллельная заявка номер 13",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.432698+03:00"
+      },
+      {
+        "id": 22,
+        "number": "SUP-2026-0022",
+        "title": "Параллельная заявка номер 20",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.435147+03:00"
+      },
+      {
+        "id": 23,
+        "number": "SUP-2026-0023",
+        "title": "Параллельная заявка номер 17",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.441006+03:00"
+      },
+      {
+        "id": 24,
+        "number": "SUP-2026-0024",
+        "title": "Параллельная заявка номер 18",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.444761+03:00"
+      },
+      {
+        "id": 25,
+        "number": "SUP-2026-0025",
+        "title": "Параллельная заявка номер 1",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.457658+03:00"
+      },
+      {
+        "id": 26,
+        "number": "SUP-2026-0026",
+        "title": "Параллельная заявка номер 9",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:27:25.488563+03:00"
+      },
+      {
+        "id": 27,
+        "number": "SUP-2026-0027",
+        "title": "Проверка одновременных действий",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Одновременное переназначение и начало работы инженером.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": 3,
+        "assigneeFullName": "Инженер 2",
+        "createdAt": "2026-10-31T11:27:25.517353+03:00"
+      },
+      {
+        "id": 31,
+        "number": "SUP-2026-0030",
+        "title": "Новая заявка после перезапуска API",
+        "equipmentId": 8,
+        "equipmentName": "Файловый сервер 01",
+        "clientId": 4,
+        "clientName": "Клиент Б",
+        "description": "Проверка уникальности номера после повторного запуска API.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.32375+03:00"
+      },
+      {
+        "id": 32,
+        "number": "SUP-2026-0033",
+        "title": "Параллельная заявка номер 19",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.595655+03:00"
+      },
+      {
+        "id": 33,
+        "number": "SUP-2026-0034",
+        "title": "Параллельная заявка номер 4",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.628275+03:00"
+      },
+      {
+        "id": 34,
+        "number": "SUP-2026-0035",
+        "title": "Параллельная заявка номер 2",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.631311+03:00"
+      },
+      {
+        "id": 35,
+        "number": "SUP-2026-0036",
+        "title": "Параллельная заявка номер 3",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.634641+03:00"
+      },
+      {
+        "id": 36,
+        "number": "SUP-2026-0037",
+        "title": "Параллельная заявка номер 6",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.644051+03:00"
+      },
+      {
+        "id": 37,
+        "number": "SUP-2026-0038",
+        "title": "Параллельная заявка номер 5",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.64382+03:00"
+      },
+      {
+        "id": 38,
+        "number": "SUP-2026-0039",
+        "title": "Параллельная заявка номер 8",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.660602+03:00"
+      },
+      {
+        "id": 39,
+        "number": "SUP-2026-0031",
+        "title": "Параллельная заявка номер 1",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.590775+03:00"
+      },
+      {
+        "id": 40,
+        "number": "SUP-2026-0040",
+        "title": "Параллельная заявка номер 11",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.666106+03:00"
+      },
+      {
+        "id": 41,
+        "number": "SUP-2026-0041",
+        "title": "Параллельная заявка номер 10",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.668417+03:00"
+      },
+      {
+        "id": 42,
+        "number": "SUP-2026-0042",
+        "title": "Параллельная заявка номер 14",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.677664+03:00"
+      },
+      {
+        "id": 43,
+        "number": "SUP-2026-0043",
+        "title": "Параллельная заявка номер 12",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.687528+03:00"
+      },
+      {
+        "id": 44,
+        "number": "SUP-2026-0044",
+        "title": "Параллельная заявка номер 18",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.691459+03:00"
+      },
+      {
+        "id": 45,
+        "number": "SUP-2026-0032",
+        "title": "Параллельная заявка номер 9",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.593066+03:00"
+      },
+      {
+        "id": 46,
+        "number": "SUP-2026-0045",
+        "title": "Параллельная заявка номер 13",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.706013+03:00"
+      },
+      {
+        "id": 47,
+        "number": "SUP-2026-0046",
+        "title": "Параллельная заявка номер 17",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.710056+03:00"
+      },
+      {
+        "id": 48,
+        "number": "SUP-2026-0047",
+        "title": "Параллельная заявка номер 16",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.713459+03:00"
+      },
+      {
+        "id": 49,
+        "number": "SUP-2026-0048",
+        "title": "Параллельная заявка номер 7",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.735423+03:00"
+      },
+      {
+        "id": 50,
+        "number": "SUP-2026-0049",
+        "title": "Параллельная заявка номер 15",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.803412+03:00"
+      },
+      {
+        "id": 51,
+        "number": "SUP-2026-0050",
+        "title": "Параллельная заявка номер 20",
+        "equipmentId": 7,
+        "equipmentName": "Сетевой принтер 01",
+        "clientId": 3,
+        "clientName": "Клиент А",
+        "description": "Проверка параллельного создания разных заявок в PostgreSQL.",
+        "status": "New",
+        "createdByUserId": 1,
+        "assigneeUserId": null,
+        "assigneeFullName": null,
+        "createdAt": "2026-10-31T11:35:42.804891+03:00"
+      }
+    ]
+  }
+]

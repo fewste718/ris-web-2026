@@ -1,8 +1,15 @@
 using backend.Services;
 using backend.Filters;
+using backend.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Настройте ConnectionStrings:Default через user-secrets или переменную окружения.");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers(options => options.Filters.Add<ApiExceptionFilter>())
     .AddJsonOptions(options => options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict);
@@ -17,7 +24,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddSingleton<IApplicationInfoService, ApplicationInfoService>();
-builder.Services.AddSingleton<ISupportTicketService, SupportTicketService>();
+builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
 
 var app = builder.Build();
 

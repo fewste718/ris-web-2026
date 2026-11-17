@@ -1,0 +1,44 @@
+{
+  "assign": {
+    "code": 409,
+    "data": {
+      "type": "about:blank",
+      "title": "Назначение разрешено только для новой заявки.",
+      "status": 409,
+      "instance": "/api/support-tickets/52/assignee"
+    }
+  },
+  "start": {
+    "code": 200,
+    "data": {
+      "id": 52,
+      "number": "SUP-2026-0051",
+      "title": "Проверка одновременных действий",
+      "equipmentId": 7,
+      "equipmentName": "Сетевой принтер 01",
+      "clientId": 3,
+      "clientName": "Клиент А",
+      "description": "Одновременное переназначение и начало работы инженером.",
+      "status": "InProgress",
+      "createdByUserId": 1,
+      "assigneeUserId": 2,
+      "assigneeFullName": "Инженер 1",
+      "createdAt": "2026-10-31T11:35:42.830229+03:00"
+    }
+  },
+  "final": {
+    "id": 52,
+    "number": "SUP-2026-0051",
+    "title": "Проверка одновременных действий",
+    "equipmentId": 7,
+    "equipmentName": "Сетевой принтер 01",
+    "clientId": 3,
+    "clientName": "Клиент А",
+    "description": "Одновременное переназначение и начало работы инженером.",
+    "status": "InProgress",
+    "createdByUserId": 1,
+    "assigneeUserId": 2,
+    "assigneeFullName": "Инженер 1",
+    "createdAt": "2026-10-31T11:35:42.830229+03:00"
+  }
+}

@@ -21,47 +21,47 @@ public sealed class SupportTicketsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType<IReadOnlyList<SupportTicketResponse>>(StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<SupportTicketResponse>> GetAll(
+    public async Task<ActionResult<IReadOnlyList<SupportTicketResponse>>> GetAll(
         [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId,
-        [FromQuery] string? status = null)
+        [FromQuery] string? status = null, CancellationToken cancellationToken = default)
     {
-        return Ok(_service.GetAll(userId, status));
+        return Ok(await _service.GetAll(userId, status, cancellationToken));
     }
 
     [HttpGet("{id:int}")]
     [ProducesResponseType<SupportTicketResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public ActionResult<SupportTicketResponse> GetById(int id,
-        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId)
+    public async Task<ActionResult<SupportTicketResponse>> GetById(int id,
+        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId, CancellationToken cancellationToken)
     {
-        return Ok(_service.GetById(id, userId));
+        return Ok(await _service.GetById(id, userId, cancellationToken));
     }
 
     [HttpPost]
     [ProducesResponseType<SupportTicketResponse>(StatusCodes.Status201Created)]
-    public ActionResult<SupportTicketResponse> CreateSupportTicket(CreateSupportTicketRequest request,
-        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId)
+    public async Task<ActionResult<SupportTicketResponse>> CreateSupportTicket(CreateSupportTicketRequest request,
+        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId, CancellationToken cancellationToken)
     {
         HttpContext.Items["EquipmentId"] = request.EquipmentId;
-        var created = _service.Create(request, userId);
+        var created = await _service.Create(request, userId, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPatch("{id:int}/assignee")]
     [ProducesResponseType<SupportTicketResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public ActionResult<SupportTicketResponse> Assign(int id, AssignSupportTicketRequest request,
-        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId)
+    public async Task<ActionResult<SupportTicketResponse>> Assign(int id, AssignSupportTicketRequest request,
+        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId, CancellationToken cancellationToken)
     {
-        return Ok(_service.Assign(id, request, userId));
+        return Ok(await _service.Assign(id, request, userId, cancellationToken));
     }
 
     [HttpPatch("{id:int}/status")]
     [ProducesResponseType<SupportTicketResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public ActionResult<SupportTicketResponse> ChangeStatus(int id, ChangeSupportTicketStatusRequest request,
-        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId)
+    public async Task<ActionResult<SupportTicketResponse>> ChangeStatus(int id, ChangeSupportTicketStatusRequest request,
+        [FromHeader(Name = "X-User-Id"), Range(1, int.MaxValue)] int userId, CancellationToken cancellationToken)
     {
-        return Ok(_service.ChangeStatus(id, request, userId));
+        return Ok(await _service.ChangeStatus(id, request, userId, cancellationToken));
     }
 }
