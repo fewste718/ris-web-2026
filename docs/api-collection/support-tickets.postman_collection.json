@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Заявки технической поддержки — проверки API",
-    "description": "Запускать по порядку на новой учебной БД после применения миграций: первый запрос ожидает отсутствие заявок. baseUrl=http://localhost:5000, ресурс support-tickets. Учебный X-User-Id: 1 — диспетчер, 2 и 3 — инженеры. ticketId и cancelTicketId заполняются из ответов POST. Заявки сохраняются в PostgreSQL; перезапуск backend не очищает базу.",
+    "name": "Мобиус Технологии — вход и API заявок",
+    "description": "ЛР11. Учебный JWT: вход диспетчера и двух инженеров, серверные запреты 401/403, переходы 409, валидация и сохранение заявки. Выполняйте весь набор по порядку на работающем API после миграций. Пустая БД не требуется, повторный запуск создаёт две новые учебные заявки без удаления старых. Токены получаются при входе, в файле отсутствуют и очищаются в конце полного прогона. Сохранение строки HTML проверяется здесь, безопасное отображение во Vue — отдельно в браузере.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -14,42 +14,105 @@
       "value": "support-tickets"
     },
     {
+      "key": "dispatcherToken",
+      "value": ""
+    },
+    {
+      "key": "engineer1Token",
+      "value": ""
+    },
+    {
+      "key": "engineer2Token",
+      "value": ""
+    },
+    {
+      "key": "tamperedToken",
+      "value": ""
+    },
+    {
       "key": "ticketId",
       "value": ""
     },
     {
       "key": "cancelTicketId",
       "value": ""
+    },
+    {
+      "key": "assignedSnapshot",
+      "value": ""
+    },
+    {
+      "key": "closedSnapshot",
+      "value": ""
+    },
+    {
+      "key": "wrongLoginTitle",
+      "value": ""
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('Ответ не содержит пароль или passwordHash', () => { function inspect(value,path=[]) { if (Array.isArray(value)) return value.forEach(item => inspect(item,path)); if (value && typeof value==='object') Object.entries(value).forEach(([key,item]) => { const validationField=path[path.length-1]==='errors' && key.toLowerCase()==='password' && Array.isArray(item) && item.every(message=>typeof message==='string'); if (!validationField) pm.expect(key).not.to.match(/password/i); inspect(item,[...path,key]); }); } if (pm.response.text()) { let value; try { value=pm.response.json(); } catch {} if (value) inspect(value); } });"
+        ]
+      }
     }
   ],
   "item": [
     {
-      "name": "01 Пустой список в новой БД — 200 и []",
+      "name": "01 Без входа создать нельзя",
       "request": {
-        "method": "GET",
+        "method": "POST",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "1"
+            "key": "Content-Type",
+            "value": "application/json"
           }
         ],
-        "url": "{{baseUrl}}/api/{{resource}}"
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": 7,\n  \"description\": \"<script>alert(1)</script>\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       },
       "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "['dispatcherToken','engineer1Token','engineer2Token','tamperedToken','ticketId','cancelTicketId','assignedSnapshot','closedSnapshot','wrongLoginTitle'].forEach(key => pm.collectionVariables.set(key, ''));",
+              "}"
+            ]
+          }
+        },
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Пустой массив', () => pm.expect(pm.response.json()).to.eql([]));"
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "02 Создать заявку — 201",
+      "name": "02 Один X-User-Id не является входом",
       "request": {
         "method": "POST",
         "header": [
@@ -62,16 +125,19 @@
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "noauth"
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Не печатает сетевой принтер\",\n  \"equipmentId\": 7,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": 7,\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}"
+        }
       },
       "event": [
         {
@@ -79,18 +145,424 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
-              "const created = pm.response.json();",
-              "pm.collectionVariables.set('ticketId', String(created.id));",
-              "pm.test('Серверные поля', () => { pm.expect(created.id).to.be.a('number'); pm.expect(created.number).to.match(/^SUP-\\d{4}-\\d{4,}$/); pm.expect(created.status).to.eql('New'); pm.expect(created.assigneeUserId).to.eql(null); pm.expect(created.createdByUserId).to.eql(1); pm.expect(created.clientId).to.eql(3); });",
-              "pm.test('Location', () => pm.expect(pm.response.headers.get('Location')).to.include('/api/support-tickets/' + created.id));"
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "03 Короткая тема — 400",
+      "name": "03 Гость не читает список",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Гость не читает профиль",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/me",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Неверный пароль",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"dispatcher1\",\n  \"password\": \"wrong-password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.collectionVariables.set('wrongLoginTitle', pm.response.json().title);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Неизвестный логин",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"unknown-lab11-user\",\n  \"password\": \"wrong-password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "pm.test('Вход не раскрывает существование логина', () => pm.expect(pm.response.json().title).to.eql(pm.collectionVariables.get('wrongLoginTitle')));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Пустая форма входа",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Вход dispatcher1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"dispatcher1\",\n  \"password\": \"Lab11-Dispatcher!2026\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test('Профиль и токен dispatcher1', () => { pm.expect(data.user.id).to.eql(1); pm.expect(data.user.role).to.eql('Dispatcher'); pm.expect(data.accessToken).to.be.a('string'); pm.expect(data.accessToken.split('.').length).to.eql(3); pm.expect(Date.parse(data.expiresAt)).to.be.above(Date.now()); });",
+              "pm.collectionVariables.set('dispatcherToken', data.accessToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Вход engineer1",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"engineer1\",\n  \"password\": \"Lab11-Engineer1!2026\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test('Профиль и токен engineer1', () => { pm.expect(data.user.id).to.eql(2); pm.expect(data.user.role).to.eql('Engineer'); pm.expect(data.accessToken).to.be.a('string'); pm.expect(data.accessToken.split('.').length).to.eql(3); pm.expect(Date.parse(data.expiresAt)).to.be.above(Date.now()); });",
+              "pm.collectionVariables.set('engineer1Token', data.accessToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Вход engineer2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"engineer2\",\n  \"password\": \"Lab11-Engineer2!2026\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data = pm.response.json();",
+              "pm.test('Профиль и токен engineer2', () => { pm.expect(data.user.id).to.eql(3); pm.expect(data.user.role).to.eql('Engineer'); pm.expect(data.accessToken).to.be.a('string'); pm.expect(data.accessToken.split('.').length).to.eql(3); pm.expect(Date.parse(data.expiresAt)).to.be.above(Date.now()); });",
+              "pm.collectionVariables.set('engineer2Token', data.accessToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 X-User-Id не подменяет профиль инженера 2",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "1"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/me",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Профиль из JWT', () => { const data=pm.response.json(); pm.expect(data.id).to.eql(3); pm.expect(data.role).to.eql('Engineer'); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Испорченный токен",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tamperedToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.collectionVariables.set('tamperedToken', 'not-a-jwt');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13 Подменённая подпись JWT",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tamperedToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "const parts = pm.collectionVariables.get('dispatcherToken').split('.'); parts[2] = (parts[2][0] === 'A' ? 'B' : 'A') + parts[2].slice(1); pm.collectionVariables.set('tamperedToken', parts.join('.'));",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14 Инженер не создаёт с X-User-Id=1",
       "request": {
         "method": "POST",
         "header": [
@@ -103,16 +575,26 @@
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"abc\",\n  \"equipmentId\": 7,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": 7,\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}"
+        }
       },
       "event": [
         {
@@ -120,36 +602,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "04 Неизвестное оборудование — 400",
+      "name": "15 Короткая тема",
       "request": {
         "method": "POST",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "1"
-          },
-          {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Не печатает сетевой принтер\",\n  \"equipmentId\": 999999,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
+          "raw": "{\n  \"title\": \"abcd\",\n  \"equipmentId\": 7,\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}"
+        }
       },
       "event": [
         {
@@ -157,85 +647,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "05 Несуществующая заявка — 404",
+      "name": "16 Неизвестное оборудование",
       "request": {
-        "method": "GET",
+        "method": "POST",
         "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          }
-        ],
-        "url": "{{baseUrl}}/api/{{resource}}/999999"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 404', function () { pm.response.to.have.status(404); });"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "06 Получить созданную заявку — 200",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          }
-        ],
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('ID сохранён', () => pm.expect(String(pm.response.json().id)).to.eql(pm.collectionVariables.get('ticketId')));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "07 В работу без инженера — 409",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "2"
-          },
           {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": 2147483647,\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+        }
       },
       "event": [
         {
@@ -243,36 +692,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "08 Назначить инженера — 200",
+      "name": "17 equipmentId должен быть JSON-числом",
       "request": {
-        "method": "PATCH",
+        "method": "POST",
         "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          },
           {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"assigneeUserId\": 2\n}",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": \"7\",\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee"
+        }
       },
       "event": [
         {
@@ -280,17 +737,18 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Назначение не меняет статус', () => { const item = pm.response.json(); pm.expect(item.status).to.eql('New'); pm.expect(item.assigneeUserId).to.eql(2); });"
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "09 Чужой инженер — 409",
+      "name": "18 Диспетчер создаёт заявку",
       "request": {
-        "method": "PATCH",
+        "method": "POST",
         "header": [
           {
             "key": "X-User-Id",
@@ -301,16 +759,26 @@
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "raw": "{\n  \"title\": \"Проверка прав Postman\",\n  \"equipmentId\": 7,\n  \"description\": \"<script>alert(1)</script>\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+        }
       },
       "event": [
         {
@@ -318,36 +786,66 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+              "{",
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "const data=pm.response.json();",
+              "pm.collectionVariables.set('ticketId', String(data.id));",
+              "pm.test('Сервер задаёт поля и автора из JWT', () => { pm.expect(data.id).to.be.a('number'); pm.expect(data.number).to.match(/^SUP-\\d{4}-\\d{4,}$/); pm.expect(data.createdByUserId).to.eql(1); pm.expect(data.status).to.eql('New'); pm.expect(data.assigneeUserId).to.eql(null); pm.expect(data.clientId).to.eql(3); });",
+              "pm.test('Описание сохранено буквально', () => pm.expect(data.description).to.eql('<script>alert(1)</script>'));",
+              "pm.test('Location', () => pm.expect(pm.response.headers.get('Location')).to.include('/api/support-tickets/' + data.id));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "10 Взять в работу — 200",
+      "name": "19 Гость не читает объект",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "20 Гость не назначает",
       "request": {
         "method": "PATCH",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "2"
-          },
-          {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "noauth"
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "raw": "{\n  \"assigneeUserId\": 2\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+        }
       },
       "event": [
         {
@@ -355,214 +853,28 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('В работе', () => pm.expect(pm.response.json().status).to.eql('InProgress'));"
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "11 Переназначение в работе — 409",
+      "name": "21 Гость не меняет статус",
       "request": {
         "method": "PATCH",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "1"
-          },
-          {
             "key": "Content-Type",
             "value": "application/json"
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"assigneeUserId\": 3\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "noauth"
         },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "12 Закрыть заявку — 200",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "2"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"status\": \"Closed\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Закрыта', () => pm.expect(pm.response.json().status).to.eql('Closed'));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "13 Повторное открытие — 409",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "2"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"status\": \"InProgress\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "14 Создать заявку для отмены — 201",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"Не открывается общая папка\",\n  \"equipmentId\": 8,\n  \"description\": \"После отправки задания принтер не начинает печать.\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 201', function () { pm.response.to.have.status(201); });",
-              "pm.collectionVariables.set('cancelTicketId', String(pm.response.json().id));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "15 Назначить второго инженера — 200",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"assigneeUserId\": 3\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/assignee"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "16 Отменить заявку — 200",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "X-User-Id",
-            "value": "1"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"status\": \"Cancelled\"\n}",
@@ -571,8 +883,83 @@
               "language": "json"
             }
           }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "22 Неназначенную заявку инженер не читает",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "23 Инженер не назначает себя",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
         },
-        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/status"
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       },
       "event": [
         {
@@ -580,24 +967,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Отмена сохраняет исполнителя', () => { const item=pm.response.json(); pm.expect(item.status).to.eql('Cancelled'); pm.expect(item.assigneeUserId).to.eql(3); });"
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "17 Список инженера — только свои — 200",
+      "name": "24 Диспетчер не берёт в работу",
       "request": {
-        "method": "GET",
+        "method": "PATCH",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "2"
+            "key": "Content-Type",
+            "value": "application/json"
           }
         ],
-        "url": "{{baseUrl}}/api/{{resource}}"
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       },
       "event": [
         {
@@ -605,24 +1012,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Только назначенные заявки', () => { const items=pm.response.json(); pm.expect(items.length).to.eql(1); pm.expect(items.every(item => item.assigneeUserId === 2)).to.eql(true); });"
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "18 Прямой доступ к чужой заявке — 409",
+      "name": "25 Диспетчера нельзя назначить инженером",
       "request": {
-        "method": "GET",
+        "method": "PATCH",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "2"
+            "key": "Content-Type",
+            "value": "application/json"
           }
         ],
-        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}"
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       },
       "event": [
         {
@@ -630,23 +1057,44 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 409', function () { pm.response.to.have.status(409); });"
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "19 Фильтр Cancelled — 200",
+      "name": "26 Неизвестный код статуса",
       "request": {
-        "method": "GET",
+        "method": "PATCH",
         "header": [
           {
-            "key": "X-User-Id",
-            "value": "1"
+            "key": "Content-Type",
+            "value": "application/json"
           }
         ],
-        "url": "{{baseUrl}}/api/{{resource}}?status=Cancelled"
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Done\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       },
       "event": [
         {
@@ -654,15 +1102,94 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Фильтр статуса', () => { const items=pm.response.json(); pm.expect(items.length).to.eql(1); pm.expect(items[0].status).to.eql('Cancelled'); });"
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
             ]
           }
         }
       ]
     },
     {
-      "name": "20 Неизвестный статус — 400",
+      "name": "27 Диспетчер назначает инженера 1",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data=pm.response.json(); pm.collectionVariables.set('assignedSnapshot', JSON.stringify(data));",
+              "pm.test('Назначение отдельно от статуса', () => { pm.expect(data.assigneeUserId).to.eql(2); pm.expect(data.status).to.eql('New'); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "28 Чужой инженер не читает",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "29 Чужой инженер не двигает с X-User-Id=2",
       "request": {
         "method": "PATCH",
         "header": [
@@ -675,16 +1202,26 @@
             "value": "application/json"
           }
         ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"status\": \"Done\"\n}",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
           "options": {
             "raw": {
               "language": "json"
             }
           }
-        },
-        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status"
+        }
       },
       "event": [
         {
@@ -692,7 +1229,1033 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('HTTP 400', function () { pm.response.to.have.status(400); });"
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "30 Свой инженер не отменяет",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Cancelled\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "31 Свой инженер не переназначает",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "32 New нельзя закрыть в обход работы",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "33 Данные после отказов сохранились",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Отказы не меняют заявку', () => pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get('assignedSnapshot'))));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "34 Назначенный инженер берёт в работу",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data=pm.response.json(); const before=JSON.parse(pm.collectionVariables.get('assignedSnapshot'));",
+              "pm.test('Изменён только статус', () => { pm.expect(data).to.eql({...before, status:'InProgress'}); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "35 В работе нельзя переназначить",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "36 Диспетчер не закрывает",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "37 Другой инженер не закрывает",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "38 Назначенный инженер закрывает",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Closed\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const data=pm.response.json(); pm.collectionVariables.set('closedSnapshot', JSON.stringify(data));",
+              "pm.test('Закрытие не меняет остальные поля', () => { const before=JSON.parse(pm.collectionVariables.get('assignedSnapshot')); pm.expect(data).to.eql({...before,status:'Closed'}); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "39 Closed нельзя открыть повторно",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "40 Closed нельзя отменить",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Cancelled\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "41 Closed нельзя переназначить",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "42 Завершённая заявка не изменилась",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Терминальное состояние сохраняется', () => pm.expect(pm.response.json()).to.eql(JSON.parse(pm.collectionVariables.get('closedSnapshot'))));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "43 Создать заявку для отмены",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Заявка для проверки отмены\",\n  \"equipmentId\": 8,\n  \"description\": \"<script>alert(1)</script>\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('cancelTicketId', String(pm.response.json().id));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "44 Назначить инженера 2",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/assignee",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assigneeUserId\": 3\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "45 Инженер 2 берёт свою заявку",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "46 Диспетчер отменяет InProgress",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Cancelled\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Отмена сохраняет запись и исполнителя', () => { const data=pm.response.json(); pm.expect(data.status).to.eql('Cancelled'); pm.expect(data.assigneeUserId).to.eql(3); pm.expect(String(data.id)).to.eql(pm.collectionVariables.get('cancelTicketId')); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "47 Cancelled нельзя начать снова",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}/status",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"InProgress\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "48 Инженер 1 не получает чужую заявку",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{cancelTicketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 403', () => pm.response.to.have.status(403));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "49 Список инженера 1 содержит только свои",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer1Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Только назначенные заявки, без зависимости от размера БД', () => { const data=pm.response.json(); pm.expect(data.every(item => item.assigneeUserId===2)).to.eql(true); pm.expect(data.some(item => String(item.id)===pm.collectionVariables.get('ticketId'))).to.eql(true); pm.expect(data.some(item => String(item.id)===pm.collectionVariables.get('cancelTicketId'))).to.eql(false); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "50 Фильтр не расширяет права инженера 2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}?status=Cancelled",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{engineer2Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Только свои Cancelled', () => { const data=pm.response.json(); pm.expect(data.every(item => item.assigneeUserId===3 && item.status==='Cancelled')).to.eql(true); pm.expect(data.some(item => String(item.id)===pm.collectionVariables.get('cancelTicketId'))).to.eql(true); });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "51 Неизвестный фильтр",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}?status=Done",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "52 Отсутствующая заявка",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/2147483647",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "53 DELETE не предоставляется",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 405', () => pm.response.to.have.status(405));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "54 Общий PATCH не предоставляется",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/{{resource}}/{{ticketId}}",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{dispatcherToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"New\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "{",
+              "pm.test('HTTP 405', () => pm.response.to.have.status(405));",
+              "['dispatcherToken','engineer1Token','engineer2Token','tamperedToken'].forEach(key => pm.collectionVariables.set(key, ''));",
+              "}"
             ]
           }
         }

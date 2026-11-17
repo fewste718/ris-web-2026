@@ -1,0 +1,7 @@
+  backend -> C:\Users\panti\OneDrive\Desktop\WEB\ris-web-2026\backend\bin\Debug\net9.0\backend.dll
+
+Сборка успешно завершена.
+    Предупреждений: 0
+    Ошибок: 0
+
+Прошло времени 00:00:00.71

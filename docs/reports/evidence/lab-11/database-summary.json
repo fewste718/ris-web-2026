@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "freshDatabase": "mobius_support_lab11_check_20261102170824",
+  "freshData": {
+    "clients": 2,
+    "equipment": 2,
+    "users": 3,
+    "tickets": 0,
+    "migrations": 2,
+    "all_hashes_nonempty": true
+  },
+  "repeatedMigrationSucceeded": true,
+  "existingTicketsBefore": 50,
+  "existingTicketsAfterMigration": 50,
+  "existingTicketFingerprintBefore": "5bd4dad69f2ebf5101e24de31aaf6bf0",
+  "existingTicketFingerprintAfterMigration": "5bd4dad69f2ebf5101e24de31aaf6bf0",
+  "existingTicketsUnchanged": true
+}

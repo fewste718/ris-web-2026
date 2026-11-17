@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-11-02T14:03:23.861Z",
+  "status": "passed",
+  "requests": 54,
+  "assertions": 124,
+  "failures": 0,
+  "failedRequests": 0,
+  "failedAssertions": 0,
+  "created": [
+    {
+      "id": 60,
+      "number": "SUP-2026-0058"
+    },
+    {
+      "id": 61,
+      "number": "SUP-2026-0059"
+    }
+  ],
+  "note": "Прогон на существующей БД без очистки. Полный отчёт с JWT хранится вне репозитория; здесь только счётчики и ID учебных заявок."
+}

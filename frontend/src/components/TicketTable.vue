@@ -15,7 +15,7 @@ const statusLabels = {
   <div class="panel">
     <div class="panel-heading">
       <h2>Реестр обращений</h2>
-      <span class="sample-label">Тестовые данные</span>
+      <span class="sample-label">Записей: {{ items.length }}</span>
     </div>
     <div class="table-scroll">
       <table>
@@ -32,7 +32,7 @@ const statusLabels = {
         <tbody>
           <tr v-for="item in items" :key="item.id">
             <td class="ticket-number">{{ item.number }}</td>
-            <td class="ticket-title">{{ item.title }}</td>
+            <td class="ticket-title">{{ item.title }}<p class="ticket-description">{{ item.description }}</p></td>
             <td>{{ item.equipmentName }}<span class="equipment-id">№ {{ item.equipmentId }}</span></td>
             <td>{{ item.clientName }}</td>
             <td><span class="status" :class="`status-${item.status}`">{{ statusLabels[item.status] }}</span></td>
@@ -54,6 +54,7 @@ td { padding: 22px 20px; line-height: 1.5; vertical-align: middle; }
 tbody tr + tr { border-top: 1px solid #edf0f5; }
 .ticket-number { color: #2458a6; white-space: nowrap; font-size: 13px; font-weight: 600; }
 .ticket-title { max-width: 280px; font-weight: 500; }
+.ticket-description { margin: 8px 0 0; color: #596b82; font-size: 13px; font-weight: 400; white-space: pre-wrap; overflow-wrap: anywhere; }
 .equipment-id { display: block; margin-top: 4px; color: #6a7a8f; font-size: 12px; }
 .status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 6px; white-space: nowrap; font-size: 12px; font-weight: 600; }
 .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

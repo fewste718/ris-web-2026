@@ -1,0 +1,20 @@
+
+> mobius-support-frontend@0.0.0 test
+> node --test tests/auth-and-rendering.test.js
+
+✔ current session receives a successful response (201.5187ms)
+✔ current 401 expires the current session (1.3165ms)
+✔ logout during response.text rejects the old 200 instead of returning old data (0.3287ms)
+✔ account switch during response.text keeps the new session and its list (0.3162ms)
+✔ old 401 after a new login cannot expire the new session (0.2639ms)
+✔ late login 200 after logout cannot restore the cancelled session (0.2633ms)
+✔ TicketList ignores simultaneous old GET success or failure after another login completes (4.8246ms)
+✔ TicketTable renders the exact script description as escaped text (1.2428ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 515.4062

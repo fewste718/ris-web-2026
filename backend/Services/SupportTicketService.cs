@@ -27,7 +27,7 @@ public sealed class SupportTicketService(AppDbContext db) : ISupportTicketServic
             .SingleOrDefaultAsync(cancellationToken)
             ?? throw new SupportTicketException(404, "Заявка не найдена.");
         if (user.Role == UserRole.Engineer && item.AssigneeUserId != user.Id)
-            throw new SupportTicketException(409, "Заявка не назначена этому инженеру.");
+            throw new SupportTicketException(403, "Заявка не назначена этому инженеру.");
         return item;
     }
 
@@ -57,9 +57,9 @@ public sealed class SupportTicketService(AppDbContext db) : ISupportTicketServic
     public async Task<SupportTicketResponse> Assign(int id, AssignSupportTicketRequest request, int userId, CancellationToken cancellationToken)
     {
         var user = await GetUser(userId, cancellationToken);
+        EnsureDispatcher(user);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         var item = await FindForUpdate(id, cancellationToken);
-        EnsureDispatcher(user);
         if (item.Status != SupportTicketStatus.New)
             throw new SupportTicketException(409, "Назначение разрешено только для новой заявки.");
         if (!await db.Users.AnyAsync(candidate => candidate.Id == request.AssigneeUserId
@@ -76,15 +76,20 @@ public sealed class SupportTicketService(AppDbContext db) : ISupportTicketServic
     {
         var user = await GetUser(userId, cancellationToken);
         var target = ParseStatus(request.Status!);
+        if (user.Role == UserRole.Dispatcher && target != SupportTicketStatus.Cancelled
+            || user.Role == UserRole.Engineer && target is not (SupportTicketStatus.InProgress or SupportTicketStatus.Closed))
+            throw new SupportTicketException(403, "Действие недоступно вашей роли.");
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
         var item = await FindForUpdate(id, cancellationToken);
+        if (user.Role == UserRole.Engineer && item.AssigneeUserId != user.Id)
+            throw new SupportTicketException(403, "Заявка не назначена этому инженеру.");
         var canCancel = user.Role == UserRole.Dispatcher && target == SupportTicketStatus.Cancelled
             && item.Status is SupportTicketStatus.New or SupportTicketStatus.InProgress;
         var assignedEngineer = user.Role == UserRole.Engineer && item.AssigneeUserId == user.Id;
         var canStart = assignedEngineer && item.Status == SupportTicketStatus.New && target == SupportTicketStatus.InProgress;
         var canClose = assignedEngineer && item.Status == SupportTicketStatus.InProgress && target == SupportTicketStatus.Closed;
         if (!canCancel && !canStart && !canClose)
-            throw new SupportTicketException(409, "Переход запрещён: проверьте статус заявки и назначенного исполнителя.");
+            throw new SupportTicketException(409, "Переход недопустим для текущего статуса заявки.");
         item.Status = target;
         await Save(cancellationToken);
         var result = await Response(id, cancellationToken);
@@ -95,7 +100,7 @@ public sealed class SupportTicketService(AppDbContext db) : ISupportTicketServic
     private async Task<ActingUser> GetUser(int id, CancellationToken cancellationToken) =>
         await db.Users.AsNoTracking().Where(user => user.Id == id)
             .Select(user => new ActingUser(user.Id, user.Role)).SingleOrDefaultAsync(cancellationToken)
-        ?? throw new SupportTicketException(400, "Укажите существующего сотрудника в X-User-Id.");
+        ?? throw new SupportTicketException(401, "Войдите в систему.");
 
     private async Task<SupportTicket> FindForUpdate(int id, CancellationToken cancellationToken) =>
         // Блокировка строки не даёт двум PATCH одновременно проверить устаревший статус.
@@ -121,7 +126,7 @@ public sealed class SupportTicketService(AppDbContext db) : ISupportTicketServic
     private static void EnsureDispatcher(ActingUser user)
     {
         if (user.Role != UserRole.Dispatcher)
-            throw new SupportTicketException(409, "Действие доступно только диспетчеру.");
+            throw new SupportTicketException(403, "Действие доступно только диспетчеру.");
     }
 
     private static SupportTicketStatus ParseStatus(string value)

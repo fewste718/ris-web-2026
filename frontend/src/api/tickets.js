@@ -1,58 +1,25 @@
-import { mockCreateTicket, mockGetTickets } from './mockTickets.js'
+import { accessToken, authUser } from '../auth/session.js'
+import { requestJson, responseError } from './client.js'
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL
-// Параметры используются только для воспроизведения отказов при разработке.
+export { ApiError } from './client.js'
+
+// Режим задаётся явно при загрузке страницы; обычный запуск использует настоящий API.
 const demo = import.meta.env.DEV ? new URLSearchParams(window.location.search) : new URLSearchParams()
-const USE_MOCK = demo.get('api') !== 'real'
-const mockOptions = { empty: demo.get('mock') === 'empty', force500: demo.get('mock') === '500' }
-
-export class ApiError extends Error {
-  constructor(message, status = null, errors = {}) {
-    super(message)
-    this.name = 'ApiError'
-    this.status = status
-    this.errors = errors
-  }
-}
+const useMock = import.meta.env.DEV && demo.get('api') === 'mock'
 
 async function request(method, body) {
-  let response
-  let data
-  if (USE_MOCK && !import.meta.env.DEV) {
-    const result = method === 'GET'
-      ? await mockGetTickets(mockOptions) : await mockCreateTicket(body, mockOptions)
-    response = result
-    data = result.data
-  } else {
-    const options = new URLSearchParams()
-    if (USE_MOCK && mockOptions.empty) options.set('empty', '1')
-    if (USE_MOCK && mockOptions.force500) options.set('force500', '1')
-    const query = options.size ? `?${options}` : ''
-    const url = USE_MOCK ? `/__mock/api/support-tickets${query}`
-      : `${baseUrl.replace(/\/$/, '')}/api/support-tickets`
-    try {
-      response = await fetch(url, {
-        method,
-        headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
-        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      })
-    } catch {
-      throw new ApiError('Нет связи с сервером.')
-    }
-    try {
-      data = await response.json()
-    } catch {
-      throw new ApiError(response.ok ? 'Сервер вернул некорректный ответ.'
-        : response.status === 400 ? 'Проверьте поля.' : 'Сервер не смог обработать запрос.', response.status)
-    }
-  }
+  if (!useMock) return requestJson('/api/support-tickets', { method, body })
 
-  if (!response.ok) {
-    throw new ApiError(response.status === 400 ? 'Проверьте поля.'
-      : response.status >= 500 ? 'Сервер не смог обработать запрос.'
-        : 'Не удалось выполнить запрос.', response.status, data?.errors)
-  }
-  return data
+  // Старые примеры ЛР6 доступны только явно в dev; обычные страницы используют API.
+  if (!accessToken.value) throw responseError(401)
+  if (method === 'POST' && authUser.value?.role !== 'Dispatcher') throw responseError(403)
+  const options = new URLSearchParams()
+  if (demo.get('mock') === 'empty') options.set('empty', '1')
+  if (demo.get('mock') === '500') options.set('force500', '1')
+  const query = options.size ? `?${options}` : ''
+  const result = await requestJson(`/__mock/api/support-tickets${query}`, { method, body, sameOrigin: true })
+  return method === 'GET' && authUser.value?.role === 'Engineer'
+    ? result.filter((item) => item.assigneeUserId === authUser.value.id) : result
 }
 
 export const getTickets = () => request('GET')

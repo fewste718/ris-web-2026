@@ -1,0 +1,98 @@
+{
+  "verification": "Vue modules with real API, without a browser",
+  "browserUsed": false,
+  "rendering": "SSR of the actual TicketTable.vue; no DOM or browser execution",
+  "sessionReload": "Fresh Vite SSR module graph with the same in-memory sessionStorage",
+  "guestCheck": "Frontend ApiError 401 before fetch after logout; no HTTP request sent",
+  "executedAt": "2026-11-02T14:12:19.345Z",
+  "apiBaseUrl": "http://localhost:5000",
+  "result": "passed",
+  "checksTotal": 9,
+  "checksPassed": 9,
+  "createdTicket": {
+    "id": 62,
+    "number": "SUP-2026-0060"
+  },
+  "checks": [
+    {
+      "name": "Frontend login authenticates dispatcher through the real API",
+      "passed": true
+    },
+    {
+      "name": "Frontend createTicket persists the exact script description through the real API",
+      "passed": true
+    },
+    {
+      "name": "Frontend getTickets reads the saved description from the real API",
+      "passed": true
+    },
+    {
+      "name": "Actual TicketTable SSR escapes the API description and creates no script element",
+      "passed": true
+    },
+    {
+      "name": "Fresh frontend module graph restores storage and verifies it with a real GET /api/auth/me",
+      "passed": true
+    },
+    {
+      "name": "Logout clears storage and the protected frontend client refuses a request without a token",
+      "passed": true
+    },
+    {
+      "name": "Wrong password through frontend login returns the real 401 and a readable ApiError",
+      "passed": true
+    },
+    {
+      "name": "Frontend login authenticates an engineer through the real API",
+      "passed": true
+    },
+    {
+      "name": "Engineer createTicket receives the real 403 with a readable ApiError",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets",
+      "method": "POST",
+      "status": 201,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/auth/me",
+      "method": "GET",
+      "status": 200,
+      "tokenPresent": true
+    },
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 401,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "tokenPresent": false
+    },
+    {
+      "url": "http://localhost:5000/api/support-tickets",
+      "method": "POST",
+      "status": 403,
+      "tokenPresent": true
+    }
+  ]
+}

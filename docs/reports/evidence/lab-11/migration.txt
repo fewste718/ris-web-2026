@@ -1,0 +1,15 @@
+Build started...
+Build succeeded.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (13ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] SELECT "MigrationId", "ProductVersion" FROM "__EFMigrationsHistory" ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (     "MigrationId" character varying(150) NOT NULL,     "ProductVersion" character varying(32) NOT NULL,     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId") );
+info: Microsoft.EntityFrameworkCore.Migrations[20411] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] SELECT "MigrationId", "ProductVersion" FROM "__EFMigrationsHistory" ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402] Applying migration '20261102135846_DemoUserPasswords'.
+Applying migration '20261102135846_DemoUserPasswords'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (6ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] UPDATE users SET password_hash = 'AQAAAAIAAYagAAAAEN1XHvHfeLR/CvM4gt4xOSGZdD/PTlkrf+DENnFw0ME0PwYU/49gNFgYpEiHY1o4Vg==' WHERE id = 1;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] UPDATE users SET password_hash = 'AQAAAAIAAYagAAAAEG+oQQiyvY0yNwPyyZQ6tX4ZGn7dtZipnqC5Ae26AL0u1hKeGjkh9YllT0BheZZWew==' WHERE id = 2;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] UPDATE users SET password_hash = 'AQAAAAIAAYagAAAAEBSoxAMxx8AI9sdz8fZqswutM4jyH0x/4F3YavGfT7w9H0mjE9qpG5syTPZCTe06LA==' WHERE id = 3;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101] Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30'] INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion") VALUES ('20261102135846_DemoUserPasswords', '9.0.22');
+Done.

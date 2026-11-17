@@ -249,7 +249,7 @@ namespace backend.Migrations
                             Id = 1,
                             FullName = "Диспетчер 1",
                             Login = "dispatcher1",
-                            PasswordHash = "AQAAAAIAAYagAAAAED3dul177ZRdcM8wAY6JtCPPMYLXttLpfDYgmWPcSlXBDhwxYzIqrgSm3U0OxTEpZg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN1XHvHfeLR/CvM4gt4xOSGZdD/PTlkrf+DENnFw0ME0PwYU/49gNFgYpEiHY1o4Vg==",
                             Role = "Dispatcher"
                         },
                         new
@@ -257,7 +257,7 @@ namespace backend.Migrations
                             Id = 2,
                             FullName = "Инженер 1",
                             Login = "engineer1",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJ5xGucLBig6fYmt3HmipYZUmBZ/8ijoami07slzi6oS14898dubiWVvl8kbD9E/XQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG+oQQiyvY0yNwPyyZQ6tX4ZGn7dtZipnqC5Ae26AL0u1hKeGjkh9YllT0BheZZWew==",
                             Role = "Engineer"
                         },
                         new
@@ -265,7 +265,7 @@ namespace backend.Migrations
                             Id = 3,
                             FullName = "Инженер 2",
                             Login = "engineer2",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPegoACPr2Pzpiofk6omGhLgjUdllVW1tUQryLB+6W5geGgFbH0gx/1b0lxNr7NPCg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBSoxAMxx8AI9sdz8fZqswutM4jyH0x/4F3YavGfT7w9H0mjE9qpG5syTPZCTe06LA==",
                             Role = "Engineer"
                         });
                 });

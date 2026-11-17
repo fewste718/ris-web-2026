@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "checks": 17,
+  "failures": 0,
+  "results": [
+    {
+      "name": "expired",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "future-not-before",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "wrong-issuer",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "wrong-audience",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "missing-expiration",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "invalid-subject-zero",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "unknown-subject",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "outdated-role",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "wrong-signature",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "wrong-algorithm",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "unsigned",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    },
+    {
+      "name": "unknown-login-and-wrong-password-same-response",
+      "passed": true
+    },
+    {
+      "name": "password-is-not-trimmed",
+      "passed": true
+    },
+    {
+      "name": "login-is-trimmed",
+      "passed": true
+    },
+    {
+      "name": "dev-origin-allowed",
+      "passed": true
+    },
+    {
+      "name": "other-origin-not-allowed",
+      "passed": true
+    },
+    {
+      "name": "swagger-auth-required-on-all-six-protected-operations",
+      "passed": true
+    }
+  ],
+  "tokenValuesSaved": false
+}

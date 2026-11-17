@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-02",
+  "verification": "manual-browser",
+  "browser": "Google Chrome",
+  "checkedBy": "Пантин Данил Денисович",
+  "status": "passed",
+  "ticket": {
+    "number": "SUP-2026-0061",
+    "title": "Ручная проверка описания",
+    "equipmentId": 7,
+    "description": "<script>alert(1)</script>",
+    "status": "New"
+  },
+  "checks": [
+    {
+      "name": "Вход диспетчера и загрузка реестра",
+      "status": "passed",
+      "observedHttpStatuses": [200, 200],
+      "evidence": "network-screenshots",
+      "images": ["manual-network.png", "manual-network-detail.png"]
+    },
+    {
+      "name": "Создание заявки и повторная загрузка реестра",
+      "status": "passed",
+      "observedHttpStatuses": [201, 200],
+      "evidence": "network-screenshots",
+      "images": ["manual-network.png", "manual-network-detail.png"]
+    },
+    {
+      "name": "Точная XSS-строка отображается обычным текстом",
+      "status": "passed",
+      "evidence": "screenshots",
+      "images": ["manual-xss-list.png", "manual-xss-detail.png"]
+    },
+    {
+      "name": "Диалог alert не появляется",
+      "status": "passed",
+      "evidence": "manual-observation"
+    },
+    {
+      "name": "После F5 сохраняются вход и созданная заявка",
+      "status": "passed",
+      "evidence": "manual-observation"
+    },
+    {
+      "name": "У инженера нет кнопки создания; прямой /new возвращает в список с отказом",
+      "status": "passed",
+      "evidence": "manual-observation"
+    }
+  ],
+  "note": "Проверил вход и создание через Network, вывод описания в реестре, отсутствие alert, сохранение сеанса и заявки после F5, ограничения интерфейса инженера. Поле evidence различает проверки со скриншотами и визуальные наблюдения."
+}

@@ -1,5 +1,11 @@
 {
   "ConnectionStrings": {
     "Default": ""
+  },
+  "Jwt": {
+    "Issuer": "mobius-support-api",
+    "Audience": "mobius-support-vue",
+    "SigningKey": "",
+    "LifetimeMinutes": 30
   }
 }
